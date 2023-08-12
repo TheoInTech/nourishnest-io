@@ -1,0 +1,20 @@
+// packages/ui
+{
+  "extends": "tsconfig/react-library.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "noEmit": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "lib": ["ES2017", "DOM"],
+    "resolveJsonModule": true
+  },
+  "include": ["."],
+  "exclude": ["dist", "build", "node_modules"]
+}
