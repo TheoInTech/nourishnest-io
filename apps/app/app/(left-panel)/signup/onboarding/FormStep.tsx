@@ -55,7 +55,12 @@ const FormStep = () => {
         )
       }
     })()
-  }, [])
+  }, [
+    setDietaryPreferencesRefs,
+    setFrequencyOfMealsRefs,
+    setRegionsRefs,
+    supabase,
+  ])
 
   useEffect(() => {
     if (localStorage.getItem('onboarding')) {
@@ -68,7 +73,7 @@ const FormStep = () => {
       setFormData(onboarding)
       setHasReachedFinalCheck(onboarding.hasReachedFinalCheck)
     }
-  }, [])
+  }, [setFormData, setHasReachedFinalCheck, setStep])
 
   switch (step) {
     case 2:

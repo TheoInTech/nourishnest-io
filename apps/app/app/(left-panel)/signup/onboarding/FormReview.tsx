@@ -132,7 +132,7 @@ const FormReview = () => {
         hasReachedFinalCheck: true,
       })
     }
-  }, [])
+  }, [hasReachedFinalCheck, setHasReachedFinalCheck])
 
   return (
     <FormLayout title="You're one step away!">
