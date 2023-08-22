@@ -1,5 +1,9 @@
+import {
+  IDietaryPreferences,
+  IFrequencyOfMeals,
+  IRegions,
+} from '@/types/collections.type'
 import { Dispatch, ReactNode, SetStateAction } from 'react'
-import { IDietaryPreferences, IRegions } from '@/types/collections.type'
 
 enum WeightUnit {
   KG = 'kg',
@@ -13,10 +17,10 @@ interface IFormData {
   weight: number
   weightType: WeightUnit
   allergies: Array<string>
-  dietaryPreference: Array<string>
-  frequencyOfMeals: Array<string>
+  dietaryPreferences: Array<number>
+  frequencyOfMeals: Array<number>
   withTeeth: boolean
-  region: string
+  region: number
 }
 
 interface IFormContext {
@@ -30,15 +34,21 @@ interface IFormContext {
   setStep: Dispatch<SetStateAction<number>>
   formData: IFormData
   setFormData: Dispatch<SetStateAction<IFormData>>
-  regions: Array<IRegions>
-  setRegions: Dispatch<SetStateAction<Array<IRegions>>>
-  dietaryPreferences: Array<IDietaryPreferences>
-  setDietaryPreferences: Dispatch<SetStateAction<Array<IDietaryPreferences>>>
+  regionsRefs: Array<IRegions>
+  setRegionsRefs: Dispatch<SetStateAction<Array<IRegions>>>
+  dietaryPreferencesRefs: Array<IDietaryPreferences>
+  setDietaryPreferencesRefs: Dispatch<
+    SetStateAction<Array<IDietaryPreferences>>
+  >
+  frequencyOfMealsRefs: Array<IFrequencyOfMeals>
+  setFrequencyOfMealsRefs: Dispatch<SetStateAction<Array<IFrequencyOfMeals>>>
+  pageLoadingMessage: string
+  setPageLoadingMessage: Dispatch<SetStateAction<string>>
 }
 
 interface IChildren {
   children: ReactNode
 }
 
-export type { IChildren, IFormContext, IFormData }
 export { WeightUnit }
+export type { IChildren, IFormContext, IFormData }

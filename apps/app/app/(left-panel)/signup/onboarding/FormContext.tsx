@@ -1,11 +1,15 @@
-import React, { createContext, useContext, useState } from 'react'
 import {
-  IFormContext,
+  IDietaryPreferences,
+  IFrequencyOfMeals,
+  IRegions,
+} from '@/types/collections.type'
+import {
   IChildren,
+  IFormContext,
   IFormData,
   WeightUnit,
 } from '@/types/form.type'
-import { IDietaryPreferences, IRegions } from '@/types/collections.type'
+import { createContext, useContext, useState } from 'react'
 
 export const formDataDefaults: IFormData = {
   userId: '',
@@ -14,10 +18,10 @@ export const formDataDefaults: IFormData = {
   weight: 0,
   weightType: WeightUnit.KG,
   allergies: [],
-  dietaryPreference: [],
+  dietaryPreferences: [],
   frequencyOfMeals: [],
   withTeeth: false,
-  region: '',
+  region: 0,
 }
 
 const FormContext = createContext<IFormContext>({
@@ -31,10 +35,14 @@ const FormContext = createContext<IFormContext>({
   setStep: () => {},
   formData: formDataDefaults,
   setFormData: () => {},
-  regions: [],
-  setRegions: () => {},
-  dietaryPreferences: [],
-  setDietaryPreferences: () => {},
+  regionsRefs: [],
+  setRegionsRefs: () => {},
+  dietaryPreferencesRefs: [],
+  setDietaryPreferencesRefs: () => {},
+  frequencyOfMealsRefs: [],
+  setFrequencyOfMealsRefs: () => {},
+  pageLoadingMessage: '',
+  setPageLoadingMessage: () => {},
 })
 
 export const FormProvider = ({ children }: IChildren) => {
@@ -43,11 +51,15 @@ export const FormProvider = ({ children }: IChildren) => {
     useState<boolean>(false)
   const [step, setStep] = useState(1)
 
-  const [dietaryPreferences, setDietaryPreferences] = useState<
+  const [dietaryPreferencesRefs, setDietaryPreferencesRefs] = useState<
     Array<IDietaryPreferences>
   >([])
-  const [regions, setRegions] = useState<Array<IRegions>>([])
+  const [regionsRefs, setRegionsRefs] = useState<Array<IRegions>>([])
+  const [frequencyOfMealsRefs, setFrequencyOfMealsRefs] = useState<
+    Array<IFrequencyOfMeals>
+  >([])
   const [formData, setFormData] = useState<IFormData>({ ...formDataDefaults })
+  const [pageLoadingMessage, setPageLoadingMessage] = useState<string>('')
 
   const handleNext = () => {
     setStep((prevValue: number) => prevValue + 1)
@@ -70,10 +82,14 @@ export const FormProvider = ({ children }: IChildren) => {
         setStep,
         formData,
         setFormData,
-        regions,
-        setRegions,
-        dietaryPreferences,
-        setDietaryPreferences,
+        regionsRefs,
+        setRegionsRefs,
+        frequencyOfMealsRefs,
+        setFrequencyOfMealsRefs,
+        dietaryPreferencesRefs,
+        setDietaryPreferencesRefs,
+        pageLoadingMessage,
+        setPageLoadingMessage,
       }}
     >
       {children}

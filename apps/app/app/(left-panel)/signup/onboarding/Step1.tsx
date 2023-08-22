@@ -1,9 +1,7 @@
 import { WeightUnit } from '@/types/form.type'
-import { createClient } from '@/utils/supabase-browser'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
-import { CalendarIcon } from 'lucide-react'
-import { useState } from 'react'
+import { CalendarIcon, InfoIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { Button } from 'ui/components/button'
 import { Calendar } from 'ui/components/calendar'
@@ -18,9 +16,11 @@ import {
 } from 'ui/components/form'
 import { Input } from 'ui/components/input'
 import { Popover, PopoverContent, PopoverTrigger } from 'ui/components/popover'
-import { Tabs, TabsList, TabsTrigger } from 'ui/components/tabs'
+import { RadioGroup, RadioGroupItem } from 'ui/components/radio-group'
+import { Separator } from 'ui/components/separator'
 import { cn } from 'ui/lib/utils'
 import is5MonthsTo3YearsOld from 'ui/utils/helpers/is5MonthsTo3YearsOld'
+import updateLocalStorage from 'ui/utils/helpers/updateLocalStorage'
 import * as z from 'zod'
 import { useFormState } from './FormContext'
 import FormLayout from './FormLayout'
@@ -28,149 +28,222 @@ import NextAndBack from './NextAndBack'
 
 const formSchema = z
   .object({
-    nickName: z.string().min(1).max(50),
-    // I need to use is5MonthsTo3YearsOld on the birthday field
+    nickName: z
+      .string()
+      .min(1, 'Nickname must contain at least 1 character')
+      .max(50, 'Nickname can only have 50 characters'),
     birthday: z
       .string()
-      .datetime()
+      .datetime('Birthday should be a date')
       .refine(val => !is5MonthsTo3YearsOld(val), {
         message: 'Birthday must be at 5 months to 3 years old',
       }),
-    weight: z.number().min(1).max(1000),
+    withTeeth: z.boolean(),
+    weight: z.coerce
+      .number()
+      .min(1, 'Weight must be at least 1')
+      .max(1000, 'Weight can not exceed 1,000'),
     weightType: z.enum([WeightUnit.KG, WeightUnit.LBS]),
   })
   .required()
 
 const Step1 = () => {
-  const { handleNext, formData, setFormData, setErrorMessage } = useFormState()
-  const supabase = createClient()
+  const { handleNext, formData, setFormData, setStep } = useFormState()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       nickName: formData?.nickName ?? '',
       birthday: formData?.birthday ?? '',
+      withTeeth: formData?.withTeeth ?? false,
       weight: formData?.weight ?? 0,
       weightType: formData?.weightType ?? WeightUnit.KG,
     },
   })
 
-  // Utils
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (
+    values: z.infer<typeof formSchema>,
+    shouldGoToReview: boolean,
+  ) => {
     console.log('values', values)
-    // setIsLoading(true)
+    console.log('shouldGoToReview', shouldGoToReview)
+    setFormData({
+      ...formData,
+      ...values,
+    })
 
-    // setFormData({
-    //   ...formData,
-    //   ...values,
-    // })
+    updateLocalStorage('onboarding', {
+      ...values,
+      step: 4,
+    })
 
-    // updateLocalStorage('onboarding', {
-    //   ...values,
-    //   step: 2,
-    // })
-
-    // setIsLoading(false)
-    // handleNext()
+    if (!shouldGoToReview) handleNext()
+    else setStep(4)
   }
 
   return (
-    <FormLayout
-      title="Your user profile"
-      description="This information will be used to create your personalized workout and meal plans."
-    >
+    <FormLayout title="Create your child's profile">
       <Form {...form}>
-        <form className="flex flex-col col-span-2 gap-4">
-          <FormField
-            control={form.control}
-            name="nickName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nickname</FormLabel>
-                <FormControl>
-                  <Input placeholder="Nickname" autoFocus {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="birthday"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={'outline'}
-                        className={cn(
-                          'w-[240px] pl-3 text-left font-normal',
-                          !field.value && 'text-muted-foreground',
-                        )}
-                      >
-                        {field.value ? (
-                          format(new Date(field.value), 'PPP')
-                        ) : (
-                          <span>Child&apos;s birthday</span>
-                        )}
-                        <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={new Date(field.value)}
-                      onSelect={field.onChange}
-                      disabled={date =>
-                        date > new Date() || date < new Date('1900-01-01')
-                      }
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormDescription>
-                  Your child&apos;s birthday is used to calculate the age.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <form className="flex flex-col col-span-2 gap-6 my-4">
+          <div className="flex gap-4">
+            {/* Nickname */}
+            <FormField
+              control={form.control}
+              name="nickName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Nickname" autoFocus {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="weightType"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Weight Type</FormLabel>
-                <FormControl>
-                  <Tabs defaultValue={WeightUnit.KG} className="w-[400px]">
-                    <TabsList>
-                      <TabsTrigger value={WeightUnit.KG}>
-                        {WeightUnit.KG}
-                      </TabsTrigger>
-                      <TabsTrigger value={WeightUnit.LBS}>
-                        {WeightUnit.LBS}
-                      </TabsTrigger>
-                    </TabsList>
-                  </Tabs>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            {/* Birthday */}
+            <FormField
+              control={form.control}
+              name="birthday"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={'outline'}
+                          className={cn(
+                            'pl-3 text-left font-normal hover:bg-accent-yellow dark:hover:text-accent-yellow-foreground',
+                            !field.value && 'text-muted-foreground',
+                          )}
+                        >
+                          {field.value ? (
+                            format(new Date(field.value), 'PPP')
+                          ) : (
+                            <span>Child&apos;s birthday</span>
+                          )}
+                          <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={new Date(field.value)}
+                        onSelect={value => field.onChange(value?.toISOString())}
+                        disabled={date => date > new Date()}
+                        fromYear={new Date().getFullYear() - 3}
+                        toYear={new Date(
+                          new Date().setMonth(new Date().getMonth() - 5),
+                        ).getFullYear()}
+                        toMonth={
+                          new Date(
+                            new Date().setMonth(new Date().getMonth() - 5),
+                          )
+                        }
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormDescription className="flex items-center gap-2">
+                    <InfoIcon className="w-3 h-3" /> Your child&apos;s birthday
+                    is used to calculate the age.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
+          <Separator />
+          <div className="flex gap-4">
+            {/* Weight */}
+            <FormField
+              control={form.control}
+              name="weight"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Weight ({form.getValues('weightType') ?? WeightUnit.KG})
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="Weight" type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Weight Type */}
+            <FormField
+              control={form.control}
+              name="weightType"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel>Unit</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex gap-4"
+                    >
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value={WeightUnit.KG} />
+                        </FormControl>
+                        <FormLabel className="font-normal cursor-pointer">
+                          {WeightUnit.KG}
+                        </FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value={WeightUnit.LBS} />
+                        </FormControl>
+                        <FormLabel className="font-normal cursor-pointer">
+                          {WeightUnit.LBS}
+                        </FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* With Teeth? */}
           <FormField
             control={form.control}
-            name="weight"
+            name="withTeeth"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Weight ({form.getValues('weightType')})</FormLabel>
+              <FormItem className="space-y-3">
+                <FormLabel>Does your child have teeth yet?</FormLabel>
                 <FormControl>
-                  <Input placeholder="Weight" type="number" {...field} />
+                  <RadioGroup
+                    onValueChange={value =>
+                      form.setValue(
+                        'withTeeth',
+                        value === 'true' ? true : false,
+                      )
+                    }
+                    defaultValue={String(field.value ?? false)}
+                    className="flex gap-4"
+                  >
+                    <FormItem className="flex items-center space-x-2 space-y-0">
+                      <FormControl>
+                        <RadioGroupItem value={String(false)} />
+                      </FormControl>
+                      <FormLabel className="font-normal cursor-pointer">
+                        None
+                      </FormLabel>
+                    </FormItem>
+                    <FormItem className="flex items-center space-x-2 space-y-0">
+                      <FormControl>
+                        <RadioGroupItem value={String(true)} />
+                      </FormControl>
+                      <FormLabel className="font-normal cursor-pointer">
+                        Yes
+                      </FormLabel>
+                    </FormItem>
+                  </RadioGroup>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -180,9 +253,10 @@ const Step1 = () => {
       </Form>
 
       <NextAndBack
-        handleSubmit={form.handleSubmit(onSubmit)}
+        handleSubmit={(shouldGoToReview: boolean) =>
+          form.handleSubmit(e => onSubmit(e, shouldGoToReview))()
+        }
         variant="next-only"
-        isLoading={isLoading}
       />
     </FormLayout>
   )

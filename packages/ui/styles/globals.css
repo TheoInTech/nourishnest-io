@@ -23,7 +23,7 @@
     --muted-foreground: 222 11% 23%;
 
     --accent-blue: 212 37% 66%;
-    --accent-blue-foreground: 222 11% 23%;
+    --accent-blue-foreground: 0 0% 96%;
 
     --accent-yellow: 53 100% 82%;
     --accent-yellow-foreground: 222 11% 23%;
@@ -81,4 +81,46 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.rdp-vhidden {
+  @apply hidden;
+}
+
+/* Enable smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide default scrollbar for Webkit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 8px; /* Width of the vertical scrollbar */
+  height: 8px; /* Height of the horizontal scrollbar */
+}
+
+/* Remove scrollbar buttons for Webkit browsers */
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* Scrollbar track (background) */
+::-webkit-scrollbar-track {
+  background-color: transparent; /* Make the track transparent */
+}
+
+/* Scrollbar handle (the moving part) */
+::-webkit-scrollbar-thumb {
+  background-color: hsl(212 37% 66%); /* Gray color */
+  border-radius: 5px; /* Slightly rounded corners */
+}
+
+/* Hide scrollbar for Firefox */
+body {
+  scrollbar-width: thin; /* Make it thin */
+  scrollbar-color: hsl(212 37% 66%) transparent; /* Thumb gray and track transparent */
+}
+
+/* Hide scrollbar for Internet Explorer and Edge */
+body::-ms-overflow-style {
+  display: none; /* Hide scrollbar */
 }

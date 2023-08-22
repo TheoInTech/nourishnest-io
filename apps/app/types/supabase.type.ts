@@ -11,43 +11,64 @@ export interface Database {
     Tables: {
       dietary_preferences: {
         Row: {
-          code: string | null
+          code: string
           created_at: string
           id: number
-          name: string | null
+          name: string
         }
         Insert: {
-          code?: string | null
+          code: string
           created_at?: string
           id?: number
-          name?: string | null
+          name: string
         }
         Update: {
-          code?: string | null
+          code?: string
           created_at?: string
           id?: number
-          name?: string | null
+          name?: string
+        }
+        Relationships: []
+      }
+      frequency_of_meals: {
+        Row: {
+          code: string
+          created_at: string
+          id: number
+          name: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: number
+          name: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: number
+          name?: string
         }
         Relationships: []
       }
       regions: {
         Row: {
-          code: string | null
+          code: string
           created_at: string
           id: number
-          name: string | null
+          name: string
         }
         Insert: {
-          code?: string | null
+          code: string
           created_at?: string
           id?: number
-          name?: string | null
+          name: string
         }
         Update: {
-          code?: string | null
+          code?: string
           created_at?: string
           id?: number
-          name?: string | null
+          name?: string
         }
         Relationships: []
       }

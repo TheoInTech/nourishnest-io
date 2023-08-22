@@ -3,7 +3,6 @@
 // import { useAuth } from '@/providers/supabase-auth-provider'
 import { FormProvider } from './FormContext'
 import FormStep from './FormStep'
-import ProgressBar from './ProgressBar'
 
 export default function Signup() {
   // const { signOut, pageLoadingMessage, user, setPageLoadingMessage } = useAuth()
@@ -19,8 +18,7 @@ export default function Signup() {
   return (
     <FormProvider>
       <main className="relative flex items-start justify-center w-full h-screen overflow-auto">
-        <ProgressBar />
-        <div className="flex w-full min-h-screen overflow-auto md:w-[70%] p-8 flex-col gap-4 md:px-2 md:py-8">
+        <div className="flex w-full min-h-screen overflow-auto md:w-[70%] p-8 flex-col gap-4 md:px-2 md:py-8 lg:py-16">
           {/* <Button
             onClick={handleLogOut}
             variant={'link'}

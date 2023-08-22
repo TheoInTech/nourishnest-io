@@ -1,25 +1,42 @@
 'use strict'
 
-import { useEffect, useState } from 'react'
+import { cn } from 'ui/lib/utils'
 import { useFormState } from './FormContext'
 
 const ProgressBar = () => {
   const { step } = useFormState()
-
-  const [width, setWidth] = useState(0)
-
-  useEffect(() => {
-    const progress = Math.ceil((100 / 3) * step)
-    const result = Math.max(10, Math.floor(progress / 10) * 10)
-    const finalResult = result >= 100 ? 100 : result
-    setWidth(finalResult)
-  }, [step])
+  const totalSteps = 3
 
   return (
-    <div
-      className="absolute top-0 left-0 h-2 bg-nn-blue z-[999]"
-      style={{ width: `${width}%` }}
-    ></div>
+    <div className="box-border flex flex-col w-full gap-2 my-4 text-xs">
+      <div className="flex w-full gap-4">
+        <div
+          className={cn(
+            'h-3 w-full rounded-lg bg-gray-300 shrink',
+            step > 0 && 'bg-accent-blue',
+          )}
+        ></div>
+        <div
+          className={cn(
+            'h-3 w-full rounded-lg bg-gray-300 shrink',
+            step > 1 && 'bg-accent-yellow',
+          )}
+        ></div>
+        <div
+          className={cn(
+            'h-3 w-full rounded-lg bg-gray-300 shrink',
+            step > 2 && 'bg-secondary',
+          )}
+        ></div>
+
+        <div
+          className={cn(
+            'h-3 w-full rounded-lg bg-gray-300 shrink',
+            step > 3 && 'bg-primary',
+          )}
+        ></div>
+      </div>
+    </div>
   )
 }
 

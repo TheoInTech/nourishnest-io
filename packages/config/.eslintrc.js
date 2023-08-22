@@ -2,7 +2,6 @@ module.exports = {
   extends: [
     'next',
     'prettier',
-    'next/babel',
     'next/core-web-vitals',
     'plugin:react-hooks/recommended',
     'plugin:react/recommended',

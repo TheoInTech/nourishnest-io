@@ -11,41 +11,29 @@ const NextAndBack = ({
   isNextDisabled = false,
 }: {
   variant?: NextAndBackVariant
-  handleSubmit: (e: any) => void | Promise<void>
+  handleSubmit: any
   backText?: string
   nextText?: string
   isLoading?: boolean
   isNextDisabled?: boolean
 }) => {
-  const { handleBack, hasReachedFinalCheck, setStep, step } = useFormState()
-
-  const handleGoToReview = (e: any) => {
-    e.preventDefault()
-
-    handleSubmit(e)
-    setStep(9)
-  }
+  const { handleBack, hasReachedFinalCheck, step } = useFormState()
 
   switch (variant) {
     case 'next-only':
       return (
         <div className="flex items-center justify-end w-full gap-2 my-4 sm:gap-4">
           <Button
-            onClick={handleSubmit}
+            onClick={() => handleSubmit(false)}
             type="submit"
-            className={`w-[8rem] flex hover:w-[8.2rem] duration-300`}
             disabled={isNextDisabled}
-            variant={'default'}
+            variant={'secondary'}
           >
             {nextText}
           </Button>
-          {hasReachedFinalCheck && step !== 9 && (
-            <Button
-              onClick={handleGoToReview}
-              className={`w-full lg:w-[10rem] flex duration-300`}
-              variant={'secondary'}
-            >
-              Final check
+          {hasReachedFinalCheck && step !== 4 && (
+            <Button onClick={() => handleSubmit(true)} variant={'default'}>
+              Submit
             </Button>
           )}
         </div>
@@ -55,52 +43,46 @@ const NextAndBack = ({
       return (
         <div className="flex flex-col w-full">
           <div className="flex items-center justify-between w-full my-4 gap-x-4">
-            <Button
-              onClick={handleBack}
-              variant={'outline'}
-              className={`flex w-full lg:w-[8rem] lg:hover:w-[8.2rem] duration-300`}
-            >
+            <Button onClick={handleBack} variant={'outline'}>
               {backText}
             </Button>
             <Button
-              onClick={handleSubmit}
+              onClick={() => handleSubmit(false)}
               type="submit"
-              variant={'default'}
+              variant={'secondary'}
               disabled={isNextDisabled}
-              className={`flex lg:hidden w-full lg:w-[8rem] lg:hover:w-[8.2rem] duration-300`}
+              className={`flex lg:hidden`}
             >
               {nextText}
             </Button>
             <div className="items-center justify-end hidden w-full gap-4 lg:flex">
               <Button
-                onClick={handleSubmit}
+                onClick={() => handleSubmit(false)}
                 type="submit"
-                variant={'default'}
+                variant={'secondary'}
                 disabled={isNextDisabled}
-                className={`flex w-full lg:w-[8rem] lg:hover:w-[8.2rem] duration-300  text-xs`}
               >
                 {nextText}
               </Button>
-              {hasReachedFinalCheck && step !== 9 && (
+              {hasReachedFinalCheck && step !== 4 && (
                 <Button
-                  onClick={handleGoToReview}
-                  className={`w-[8rem] hover:w-[8.2rem] duration-300`}
-                  variant={'secondary'}
+                  onClick={() => handleSubmit(true)}
+                  variant={'default'}
                   type="submit"
                 >
-                  Final check
+                  Submit
                 </Button>
               )}
             </div>
           </div>
-          {hasReachedFinalCheck && step !== 9 && (
+          {hasReachedFinalCheck && step !== 4 && (
             <Button
-              onClick={handleGoToReview}
-              className={`w-full flex lg:hidden duration-300`}
-              variant={'secondary'}
+              onClick={() => handleSubmit(true)}
+              className={`flex lg:hidden`}
+              variant={'default'}
               type="submit"
             >
-              Final check
+              Submit
             </Button>
           )}
         </div>

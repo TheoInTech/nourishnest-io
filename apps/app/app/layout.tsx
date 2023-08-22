@@ -1,5 +1,45 @@
+import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
+import localFont from 'next/font/local'
+import { ThemeProvider } from 'ui/components/theme-provider'
 import './globals.css'
+
+const breeserif = localFont({
+  src: [
+    {
+      path: '../../../packages/ui/styles/fonts/BreeSerif/BreeSerif-Regular.ttf',
+    },
+  ],
+  variable: '--font-breeserif',
+  display: 'swap',
+})
+
+const lato = localFont({
+  src: [
+    {
+      path: '../../../packages/ui/styles/fonts/Lato/Lato-Thin.ttf',
+      weight: '200',
+    },
+    {
+      path: '../../../packages/ui/styles/fonts/Lato/Lato-Light.ttf',
+      weight: '300',
+    },
+    {
+      path: '../../../packages/ui/styles/fonts/Lato/Lato-Regular.ttf',
+      weight: '400',
+    },
+    {
+      path: '../../../packages/ui/styles/fonts/Lato/Lato-Bold.ttf',
+      weight: '600',
+    },
+    {
+      path: '../../../packages/ui/styles/fonts/Lato/Lato-Black.ttf',
+      weight: '800',
+    },
+  ],
+  variable: '--font-lato',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://nourishnest.io'),
@@ -79,10 +119,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <main className="flex flex-col items-center min-h-screen bg-background">
-          {children}
-        </main>
+      <body className={`${breeserif.variable} ${lato.variable}`}>
+        <ThemeProvider attribute="class" defaultTheme="light">
+          <main className="flex flex-col items-center min-h-screen bg-background">
+            {children}
+            <Analytics />
+          </main>
+        </ThemeProvider>
       </body>
     </html>
   )
