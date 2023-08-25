@@ -29,7 +29,7 @@ export default async function WaitlistLayout({
         <ThemeToggle className="absolute z-30 top-5 right-10" />
 
         <main className="relative flex items-start justify-center w-full h-screen overflow-auto">
-          <div className="flex w-full min-h-screen overflow-auto md:w-[65%] flex-col p-8 md:p-16 gap-4 md:px-2">
+          <div className="flex w-full min-h-screen justify-center overflow-auto md:w-[70%] flex-col p-8 gap-4 md:p-0">
             <div className="flex flex-col gap-y-2">
               <div className="flex items-center gap-4 text-primary">
                 <Logo className="w-24 h-24" />
