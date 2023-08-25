@@ -65,8 +65,6 @@ const Step1 = () => {
     values: z.infer<typeof formSchema>,
     shouldGoToReview: boolean,
   ) => {
-    console.log('values', values)
-    console.log('shouldGoToReview', shouldGoToReview)
     setFormData({
       ...formData,
       ...values,

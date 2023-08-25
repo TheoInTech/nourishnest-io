@@ -3,6 +3,7 @@ import { useFormState } from './FormContext'
 // import FormReview from './FormReview'
 import { IFormData } from '@/types/form.type'
 import { createClient } from '@/utils/supabase-browser'
+import secureLocalStorage from 'react-secure-storage'
 import FormReview from './FormReview'
 import Step1 from './Step1'
 import Step2 from './Step2'
@@ -63,11 +64,11 @@ const FormStep = () => {
   ])
 
   useEffect(() => {
-    if (localStorage.getItem('onboarding')) {
+    if (secureLocalStorage.getItem('onboarding')) {
       const onboarding: IFormData & {
         step: number
         hasReachedFinalCheck: boolean
-      } = JSON.parse(localStorage.getItem('onboarding') ?? '')
+      } = JSON.parse((secureLocalStorage.getItem('onboarding') as string) ?? '')
 
       setStep(onboarding.hasReachedFinalCheck ? 4 : onboarding?.step ?? 1)
       setFormData(onboarding)

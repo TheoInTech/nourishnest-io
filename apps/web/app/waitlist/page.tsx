@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase-browser'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { CalendarIcon, InfoIcon, Loader2 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from 'ui/components/button'
 import { Calendar } from 'ui/components/calendar'
@@ -25,6 +25,7 @@ import { cn } from 'ui/lib/utils'
 import is5MonthsTo3YearsOld from 'ui/utils/helpers/is5MonthsTo3YearsOld'
 import * as z from 'zod'
 import DestructiveAlert from './DestructiveAlert'
+import Loading from './loading'
 
 const formSchema = z
   .object({
@@ -45,6 +46,7 @@ const formSchema = z
 const WaitlistPage = () => {
   // States
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isPageReady, setIsPageReady] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null | undefined>(
     '',
   )
@@ -79,8 +81,6 @@ const WaitlistPage = () => {
         ])
         .select()
 
-      console.log('error', error)
-
       if (error) {
         if (error?.message?.includes('duplicate key')) {
           throw new Error(
@@ -91,7 +91,7 @@ const WaitlistPage = () => {
         throw new Error(`Failed to save to database: ${error?.message}`)
       }
 
-      localStorage.set('waitlisted', true)
+      localStorage.setItem('waitlisted', String(true))
       setHasAlreadySubmitted(true)
     } catch (error: any) {
       setErrorMessage(error?.message || error || 'Something went wrong.')
@@ -103,9 +103,16 @@ const WaitlistPage = () => {
 
   // useEffects
   useEffect(() => {
-    const checked = localStorage.getItem('waitlisted')
-    setHasAlreadySubmitted(checked === 'true')
+    if (typeof window !== 'undefined') {
+      const checked = localStorage.getItem('waitlisted')
+      setHasAlreadySubmitted(checked === 'true')
+      setIsPageReady(true)
+    }
   }, [])
+
+  if (!isPageReady) {
+    return <Loading />
+  }
 
   return (
     <>
@@ -135,116 +142,125 @@ const WaitlistPage = () => {
             </TypographyH4>
             {errorMessage && <DestructiveAlert message={errorMessage} />}
 
-            <div className="flex flex-col w-full gap-4">
-              <Form {...form}>
-                <form className="flex flex-col col-span-2 gap-6 my-4">
-                  {/* Name */}
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder="Your Name"
-                            autoFocus
-                            required
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+            <Suspense fallback={<Loading />}>
+              <div className="flex flex-col w-full gap-4">
+                <Form {...form}>
+                  <form className="flex flex-col col-span-2 gap-6 my-4">
+                    {/* Name */}
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input
+                              placeholder="Your Name"
+                              autoFocus
+                              required
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  {/* Email */}
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input placeholder="Email" required {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    {/* Email */}
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input placeholder="Email" required {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  {/* Birthday */}
-                  <FormField
-                    control={form.control}
-                    name="childsBirthday"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant={'outline'}
-                                className={cn(
-                                  'pl-3 text-left font-normal hover:bg-accent-yellow dark:hover:text-accent-yellow-foreground',
-                                  !field.value && 'text-muted-foreground/60',
-                                )}
-                              >
-                                {field.value ? (
-                                  format(new Date(field.value), 'PPP')
-                                ) : (
-                                  <span>Child&apos;s birthday</span>
-                                )}
-                                <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={new Date(field.value)}
-                              onSelect={value =>
-                                field.onChange(value?.toISOString())
-                              }
-                              disabled={date => date > new Date()}
-                              fromYear={new Date().getFullYear() - 3}
-                              toYear={new Date(
-                                new Date().setMonth(new Date().getMonth() - 5),
-                              ).getFullYear()}
-                              toMonth={
-                                new Date(
+                    {/* Birthday */}
+                    <FormField
+                      control={form.control}
+                      name="childsBirthday"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={'outline'}
+                                  className={cn(
+                                    'pl-3 text-left font-normal hover:bg-accent-yellow dark:hover:text-accent-yellow-foreground',
+                                    !field.value && 'text-muted-foreground/60',
+                                  )}
+                                >
+                                  {field.value ? (
+                                    format(new Date(field.value), 'PPP')
+                                  ) : (
+                                    <span>Child&apos;s birthday</span>
+                                  )}
+                                  <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={new Date(field.value)}
+                                onSelect={value =>
+                                  field.onChange(value?.toISOString())
+                                }
+                                disabled={date => date > new Date()}
+                                fromYear={new Date().getFullYear() - 3}
+                                toYear={new Date(
                                   new Date().setMonth(
                                     new Date().getMonth() - 5,
                                   ),
-                                )
-                              }
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormDescription className="flex items-center gap-2">
-                          <InfoIcon className="w-3 h-3" /> Your child&apos;s
-                          birthday is used to calculate the age. We only accept
-                          5 months to 3 years old.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                                ).getFullYear()}
+                                toMonth={
+                                  new Date(
+                                    new Date().setMonth(
+                                      new Date().getMonth() - 5,
+                                    ),
+                                  )
+                                }
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <FormDescription className="flex items-center gap-2">
+                            <InfoIcon className="w-3 h-3" /> Your child&apos;s
+                            birthday is used to calculate the age. We only
+                            accept 5 months to 3 years old.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  <Button
-                    onClick={form.handleSubmit(onSubmit)}
-                    type="submit"
-                    disabled={
-                      !form.getValues('name') ||
-                      !form.getValues('email') ||
-                      isLoading
-                    }
-                    variant={'secondary'}
-                    className="flex items-center self-end gap-2"
-                  >
-                    {isLoading && <Loader2 className="w-5 h-5 animate-spin" />}
-                    Submit
-                  </Button>
-                </form>
-              </Form>
-            </div>
+                    <Button
+                      onClick={form.handleSubmit(onSubmit)}
+                      type="submit"
+                      disabled={
+                        !form.getValues('name') ||
+                        !form.getValues('email') ||
+                        isLoading
+                      }
+                      variant={'secondary'}
+                      className="flex items-center self-end gap-2"
+                    >
+                      {isLoading && (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      )}
+                      Submit
+                    </Button>
+                  </form>
+                </Form>
+              </div>
+            </Suspense>
           </div>
         </>
       )}
