@@ -46,11 +46,11 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_HOST_URL ?? 'https://nourishnest.app',
   ),
   title: {
-    default: "Nourish Nest - Your Child's Nutrition Partner",
-    template: '%s | Nourish Nest',
+    default: 'Nourish Nest - Your Parenting Partner',
+    template: '%s | Nourish Nest - Your Parenting Partner',
   },
   description:
-    "Your trusted companion in nourishing and nurturing your child. Discover weekly meal plans and grocery lists tailored for your child's unique needs.",
+    'Elevate your parenting game with easy, nutritious meal plans and grocery list in minutes.',
   keywords: [
     'child nutrition',
     'baby meal plans',
@@ -67,13 +67,16 @@ export const metadata: Metadata = {
     'Nourish Nest',
     'meal planning',
     'parenting companion',
+    'smart parenting',
+    'parenting app',
+    'parenting partner',
   ],
   openGraph: {
-    title: "Nourish Nest - Your Child's Nutrition Partner",
+    title: 'Nourish Nest - Your Parenting Partner',
     description:
-      "Your trusted companion in nourishing and nurturing your child. Discover weekly meal plans and grocery lists tailored for your child's unique needs.",
+      'Elevate your parenting game with easy, nutritious meal plans and grocery list in minutes.',
     url: process.env.NEXT_PUBLIC_HOST_URL ?? 'https://nourishnest.app',
-    siteName: 'Nourish Nest',
+    siteName: 'Nourish Nest - Your Parenting Partner',
     locale: 'en-US',
     type: 'website',
     images: [
@@ -98,10 +101,10 @@ export const metadata: Metadata = {
     },
   },
   twitter: {
-    title: "Nourish Nest - Your Child's Nutrition Partner",
+    title: 'Nourish Nest - Your Parenting Partner',
     card: 'summary_large_image',
     description:
-      "Your trusted companion in nourishing and nurturing your child. Discover weekly meal plans and grocery lists tailored for your child's unique needs.",
+      'Elevate your parenting game with easy, nutritious meal plans and grocery list in minutes.',
     creator: '@nourish_nest',
     images: [
       `${
