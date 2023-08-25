@@ -10,7 +10,7 @@ export function TypographyH2({
   return (
     <h2
       className={cn(
-        'pb-2 text-3xl font-bold transition-colors scroll-m-20 first:mt-0',
+        'pb-2 text-2xl md:text-3xl font-bold transition-colors scroll-m-20 first:mt-0',
         className,
       )}
     >

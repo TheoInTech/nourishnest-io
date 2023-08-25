@@ -43,7 +43,7 @@ const lato = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_HOST_URL ?? 'https://app.nourishnest.io',
+    process.env.NEXT_PUBLIC_HOST_URL ?? 'https://nourishnest.io',
   ),
   title: {
     default: "Nourish Nest - Your Child's Nutrition Partner",
@@ -72,14 +72,14 @@ export const metadata: Metadata = {
     title: "Nourish Nest - Your Child's Nutrition Partner",
     description:
       "Your trusted companion in nourishing and nurturing your child. Discover weekly meal plans and grocery lists tailored for your child's unique needs.",
-    url: process.env.NEXT_PUBLIC_HOST_URL ?? 'https://app.nourishnest.io',
+    url: process.env.NEXT_PUBLIC_HOST_URL ?? 'https://nourishnest.io',
     siteName: 'Nourish Nest',
     locale: 'en-US',
     type: 'website',
     images: [
       {
         url: `${
-          process.env.NEXT_PUBLIC_HOST_URL ?? 'https://app.nourishnest.io'
+          process.env.NEXT_PUBLIC_HOST_URL ?? 'https://nourishnest.io'
         }/og-image.png`,
         width: 2560,
         height: 1440,
@@ -105,7 +105,7 @@ export const metadata: Metadata = {
     creator: '@nourish_nest',
     images: [
       `${
-        process.env.NEXT_PUBLIC_HOST_URL ?? 'https://app.nourishnest.io'
+        process.env.NEXT_PUBLIC_HOST_URL ?? 'https://nourishnest.io'
       }/og-image.png`,
     ],
   },

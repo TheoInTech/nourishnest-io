@@ -136,7 +136,7 @@ const FormReview = () => {
 
   return (
     <FormLayout title="You're one step away!">
-      <TypographyP className="mt-0">
+      <TypographyP>
         Review your child&apos;s information and submit to generate your plan.
       </TypographyP>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

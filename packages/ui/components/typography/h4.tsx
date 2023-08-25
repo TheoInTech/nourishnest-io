@@ -7,5 +7,9 @@ export function TypographyH4({
   children: React.ReactNode
   className?: string
 }) {
-  return <h4 className={cn('text-xl font-semibold', className)}>{children}</h4>
+  return (
+    <h4 className={cn('text-lg md:text-xl font-semibold', className)}>
+      {children}
+    </h4>
+  )
 }
