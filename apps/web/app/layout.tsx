@@ -70,6 +70,8 @@ export const metadata: Metadata = {
     'smart parenting',
     'parenting app',
     'parenting partner',
+    'feed my baby',
+    'baby feeding',
   ],
   openGraph: {
     title: 'Nourish Nest - Your Parenting Partner',
@@ -118,8 +120,8 @@ export const metadata: Metadata = {
     maximumScale: 1,
   },
   icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
+    icon: '/favicon.png',
+    apple: '/favicon.png',
   },
 }
 

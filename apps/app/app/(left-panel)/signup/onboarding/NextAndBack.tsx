@@ -33,7 +33,7 @@ const NextAndBack = ({
           </Button>
           {hasReachedFinalCheck && step !== 4 && (
             <Button onClick={() => handleSubmit(true)} variant={'default'}>
-              Submit
+              Review
             </Button>
           )}
         </div>
@@ -70,7 +70,7 @@ const NextAndBack = ({
                   variant={'default'}
                   type="submit"
                 >
-                  Submit
+                  Review
                 </Button>
               )}
             </div>
@@ -82,7 +82,7 @@ const NextAndBack = ({
               variant={'default'}
               type="submit"
             >
-              Submit
+              Review
             </Button>
           )}
         </div>

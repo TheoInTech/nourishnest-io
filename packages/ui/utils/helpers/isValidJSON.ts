@@ -1,10 +1,10 @@
 const isValidJSON = (str: string) => {
   try {
-    JSON.parse(str)
+    const parsed = JSON.parse(str)
+    return typeof parsed === 'object' && parsed !== null
   } catch (e) {
     return false
   }
-  return true
 }
 
 export default isValidJSON

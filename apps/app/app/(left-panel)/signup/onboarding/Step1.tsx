@@ -1,3 +1,4 @@
+import { useAuth } from '@/providers/supabase-auth-provider'
 import { WeightUnit } from '@/types/form.type'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
@@ -17,7 +18,6 @@ import {
 import { Input } from 'ui/components/input'
 import { Popover, PopoverContent, PopoverTrigger } from 'ui/components/popover'
 import { RadioGroup, RadioGroupItem } from 'ui/components/radio-group'
-import { Separator } from 'ui/components/separator'
 import { cn } from 'ui/lib/utils'
 import is5MonthsTo3YearsOld from 'ui/utils/helpers/is5MonthsTo3YearsOld'
 import updateLocalStorage from 'ui/utils/helpers/updateLocalStorage'
@@ -49,6 +49,7 @@ const formSchema = z
 
 const Step1 = () => {
   const { handleNext, formData, setFormData, setStep } = useFormState()
+  const { user } = useAuth()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -70,7 +71,7 @@ const Step1 = () => {
       ...values,
     })
 
-    updateLocalStorage('onboarding', {
+    updateLocalStorage(`onboarding-${user?.id}`, {
       ...values,
       step: 4,
     })
@@ -82,7 +83,7 @@ const Step1 = () => {
   return (
     <FormLayout title="Create your child's profile">
       <Form {...form}>
-        <form className="flex flex-col col-span-2 gap-6 my-4">
+        <form className="flex flex-col col-span-2 gap-8 my-4">
           <div className="flex gap-4">
             {/* Nickname */}
             <FormField
@@ -110,7 +111,7 @@ const Step1 = () => {
                         <Button
                           variant={'outline'}
                           className={cn(
-                            'pl-3 text-left font-normal hover:bg-accent-yellow dark:hover:text-accent-yellow-foreground',
+                            'pl-3 text-left py-6 font-normal hover:bg-accent-yellow dark:hover:text-accent-yellow-foreground',
                             !field.value && 'text-muted-foreground',
                           )}
                         >
@@ -141,7 +142,7 @@ const Step1 = () => {
                       />
                     </PopoverContent>
                   </Popover>
-                  <FormDescription className="flex items-center gap-2">
+                  <FormDescription className="flex items-center gap-2 text-[10px]">
                     <InfoIcon className="w-3 h-3" /> Your child&apos;s birthday
                     is used to calculate the age.
                   </FormDescription>
@@ -151,7 +152,6 @@ const Step1 = () => {
             />
           </div>
 
-          <Separator />
           <div className="flex gap-4">
             {/* Weight */}
             <FormField

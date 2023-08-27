@@ -1,3 +1,5 @@
+import { useAuth } from '@/providers/supabase-auth-provider'
+import { Json } from '@/types/supabase.type'
 import { createClient } from '@/utils/supabase-browser'
 import axios from 'axios'
 import { format } from 'date-fns'
@@ -14,7 +16,10 @@ import {
 import { TypographyP } from 'ui/components/typography/p'
 import birthdayToAge from 'ui/utils/helpers/birthdayToAge'
 import isValidJSON from 'ui/utils/helpers/isValidJSON'
+import isValidMealPlan from 'ui/utils/helpers/isValidMealPlan'
+import isValidShoppingList from 'ui/utils/helpers/isValidShoppingList'
 import updateLocalStorage from 'ui/utils/helpers/updateLocalStorage'
+import wait from 'ui/utils/helpers/wait'
 import { useFormState } from './FormContext'
 import FormLayout from './FormLayout'
 import NextAndBack from './NextAndBack'
@@ -23,15 +28,19 @@ const FormReview = () => {
   const router = useRouter()
   const {
     formData,
-    dietaryPreferencesRefs,
-    regionsRefs,
-    frequencyOfMealsRefs,
     setStep,
     setHasReachedFinalCheck,
     hasReachedFinalCheck,
     setPageLoadingMessage,
     setErrorMessage,
   } = useFormState()
+  const {
+    user,
+    mutateProfile,
+    dietaryPreferences: dietaryPreferencesRefs,
+    regions: regionsRefs,
+    frequencyOfMeals: frequencyOfMealsRefs,
+  } = useAuth()
   const supabase = createClient()
 
   async function generateFromOpenAi(
@@ -58,7 +67,7 @@ const FormReview = () => {
           reject('Generated meal plan is less than expected. Please try again.')
         }
 
-        resolve(parsedResponse)
+        resolve(parsedResponse?.data)
       } catch (error) {
         reject(error)
       }
@@ -66,13 +75,15 @@ const FormReview = () => {
   }
 
   const onSubmit = async () => {
-    const dietaryPreferences = formData.dietaryPreferences.map(
-      pref => dietaryPreferencesRefs.find(ref => ref.id === pref)?.name,
+    const dietaryPreferences = formData.dietaryPreferences?.map(
+      pref => dietaryPreferencesRefs?.find(ref => ref.id === pref)?.name,
     )
 
-    const frequencyOfMeals = formData.frequencyOfMeals.map(
-      meal => frequencyOfMealsRefs.find(ref => ref.id === meal)?.name,
+    const frequencyOfMeals = formData.frequencyOfMeals?.map(
+      meal => frequencyOfMealsRefs?.find(ref => ref.id === meal)?.name,
     )
+
+    const region = regionsRefs?.find(ref => ref.id === formData.region)?.name
 
     // 1. Build the prompt
     const prompt = `
@@ -81,9 +92,7 @@ const FormReview = () => {
     2. Dietary Preferences - ${dietaryPreferences.join(', ')}
     3. Child's Weight - ${formData.weight} ${formData.weightType}
     4. Allergies - ${formData.allergies.join(', ')}
-    5. Region / Location - ${
-      regionsRefs.find(ref => ref.id === formData.region)?.name
-    }
+    5. Region / Location - ${region}
     6. Frequency of Meals - ${frequencyOfMeals.join(', ')}
     7. With teeth? - ${formData.withTeeth ? 'Yes' : 'None'}
     `
@@ -91,34 +100,140 @@ const FormReview = () => {
     try {
       // 2. Generate the meal plan via API
       setPageLoadingMessage('Generating your meal plan...')
-      const mealResponse: any = await generateFromOpenAi(
+      const mealResponse = (await generateFromOpenAi(
         'meal',
         prompt,
         frequencyOfMeals.join(', '),
-      )
+      )) as Json[]
 
+      if (!isValidMealPlan(mealResponse)) {
+        throw new Error('Invalid meal plan generated.')
+      }
       // 3. Generate the grocery list via API
-      // setPageLoadingMessage('Generating your shopping list...')
-      // const shoppingResponse: any = await generateFromOpenAi('shopping', prompt)
+      setPageLoadingMessage('Generating your grocery list...')
+      const shoppingResponse = (await generateFromOpenAi(
+        'shopping',
+        prompt,
+      )) as Json[]
 
-      if (
-        // shoppingResponse?.data?.length === 0 ||
-        mealResponse?.data?.length === 0
-      ) {
-        setErrorMessage(
-          'There was a problem generating your meal plan. Please try again.',
-        )
+      if (!isValidShoppingList(shoppingResponse)) {
+        throw new Error('Invalid grocery list generated.')
+      }
+
+      if (shoppingResponse?.length === 0 || mealResponse?.length === 0) {
+        setErrorMessage('There was a problem generating your meal plan.')
         setPageLoadingMessage('')
         return
       }
 
-      // 4a. (Temporary) Display the meal plans
-      await updateLocalStorage('meal-plan', JSON.stringify(mealResponse?.data))
-      router.push('/')
+      setPageLoadingMessage('Finalizing your profile...')
+      const { data, error } = await supabase
+        .from('profile')
+        .insert({
+          user_id: user?.id ?? '',
+          nickname: formData?.nickName,
+          email: user?.email ?? '',
+          birthday: new Date(formData?.birthday).toISOString(),
+          weight: formData?.weight,
+          weight_type: formData?.weightType,
+          with_teeth: formData?.withTeeth,
+          allergies: formData?.allergies,
+          region_id: formData?.region,
+          generated_weeks: 1,
+          availed_weeks: 0,
+          tags: ['beta'],
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .select()
+        .single()
 
-      // 4b. (Real) Save the plans to the database
-    } catch (error) {
-      setErrorMessage(`${error ?? 'Something went wrong.'}`)
+      if (error) {
+        setErrorMessage('There was a problem creating your profile.')
+        console.error('error:', error)
+        setPageLoadingMessage('')
+        return
+      }
+
+      await mutateProfile()
+      const profile = { ...data }
+
+      console.log('profile', profile)
+      if (profile) {
+        await wait(500)
+        const dietaryPreferences = await formData?.dietaryPreferences?.map(
+          diet => ({
+            dietary_preferences_id: diet,
+            user_id: user?.id ?? '',
+            profile_id: profile?.id,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          }),
+        )
+        console.log('dietaryPreferences', dietaryPreferences)
+        const { error: dietError } = await supabase
+          .from('profile_dietary_preferences')
+          .insert(dietaryPreferences)
+          .select()
+        if (dietError)
+          throw new Error('Error in saving your dietary preferences.')
+
+        const frequencyOfMeals = await formData?.frequencyOfMeals?.map(fom => ({
+          frequency_of_meals_id: fom,
+          user_id: user?.id ?? '',
+          profile_id: profile?.id,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }))
+        console.log('frequencyOfMeals', frequencyOfMeals)
+        const { error: fomError } = await supabase
+          .from('profile_frequency_of_meals')
+          .insert(frequencyOfMeals)
+          .select()
+        if (fomError)
+          throw new Error('Error in saving the frequency of your meals.')
+
+        await wait(500)
+        const { error: mealError } = await supabase
+          .from('meal_plans')
+          .insert({
+            plan: [mealResponse],
+            user_id: user?.id ?? '',
+            profile_id: profile?.id,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .select()
+        if (mealError) throw new Error('Error in saving your meal plan.')
+        console.log('meal_plans saved')
+
+        const { error: shoppingError } = await supabase
+          .from('shopping_plans')
+          .insert([
+            {
+              plan: [shoppingResponse],
+              user_id: user?.id ?? '',
+              profile_id: profile?.id,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            },
+          ])
+          .select()
+        if (shoppingError) throw new Error('Error in saving your grocery list.')
+        console.log('shopping_plans saved')
+
+        await mutateProfile()
+        await localStorage?.removeItem(`onboarding-${user?.id}`)
+        await router.push('/')
+      }
+    } catch (error: any) {
+      setErrorMessage(
+        `${
+          error?.message + ' Please try again.' ||
+          error + ' Please try again.' ||
+          'Something went wrong.'
+        }`,
+      )
       console.error(error)
       setPageLoadingMessage('')
     }
@@ -128,11 +243,11 @@ const FormReview = () => {
     if (!hasReachedFinalCheck) {
       setHasReachedFinalCheck(true)
 
-      updateLocalStorage('onboarding', {
+      updateLocalStorage(`onboarding-${user?.id}`, {
         hasReachedFinalCheck: true,
       })
     }
-  }, [hasReachedFinalCheck, setHasReachedFinalCheck])
+  }, [hasReachedFinalCheck, setHasReachedFinalCheck, user?.id])
 
   return (
     <FormLayout title="You're one step away!">
@@ -141,12 +256,12 @@ const FormReview = () => {
       </TypographyP>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card
-          className="relative w-full cursor-pointer hover:bg-accent-yellow"
+          className="relative w-full cursor-pointer hover:bg-accent-yellow dark:hover:bg-accent-blue"
           onClick={() => setStep(1)}
         >
           <CardHeader>
             <CardDescription>Child&apos;s Nickname</CardDescription>
-            <CardTitle className="font-sans text-xl">
+            <CardTitle className="font-sans text-lg">
               {formData?.nickName}
             </CardTitle>
           </CardHeader>
@@ -154,12 +269,12 @@ const FormReview = () => {
         </Card>
 
         <Card
-          className="relative w-full cursor-pointer hover:bg-accent-yellow"
+          className="relative w-full cursor-pointer hover:bg-accent-yellow dark:hover:bg-accent-blue"
           onClick={() => setStep(1)}
         >
           <CardHeader>
             <CardDescription>Birthday</CardDescription>
-            <CardTitle className="font-sans text-xl">
+            <CardTitle className="font-sans text-lg">
               {format(new Date(formData.birthday), 'PPP')}
               <br />
               <span className="text-sm font-normal">
@@ -171,12 +286,12 @@ const FormReview = () => {
         </Card>
 
         <Card
-          className="relative w-full cursor-pointer hover:bg-accent-yellow"
+          className="relative w-full cursor-pointer hover:bg-accent-yellow dark:hover:bg-accent-blue"
           onClick={() => setStep(1)}
         >
           <CardHeader>
             <CardDescription>Weight</CardDescription>
-            <CardTitle className="font-sans text-xl">
+            <CardTitle className="font-sans text-lg">
               {formData?.weight} {formData?.weightType}
             </CardTitle>
           </CardHeader>
@@ -184,12 +299,12 @@ const FormReview = () => {
         </Card>
 
         <Card
-          className="relative w-full cursor-pointer hover:bg-accent-yellow"
+          className="relative w-full cursor-pointer hover:bg-accent-yellow dark:hover:bg-accent-blue"
           onClick={() => setStep(1)}
         >
           <CardHeader>
             <CardDescription>Does your child have teeth yet?</CardDescription>
-            <CardTitle className="font-sans text-xl">
+            <CardTitle className="font-sans text-lg">
               {formData?.withTeeth ? 'Yes' : 'None'}
             </CardTitle>
           </CardHeader>
@@ -197,30 +312,30 @@ const FormReview = () => {
         </Card>
 
         <Card
-          className="relative w-full cursor-pointer hover:bg-accent-yellow"
+          className="relative w-full cursor-pointer hover:bg-accent-yellow dark:hover:bg-accent-blue"
           onClick={() => setStep(2)}
         >
           <CardHeader>
             <CardDescription>Region</CardDescription>
-            <CardTitle className="font-sans text-xl">
-              {regionsRefs.find(ref => ref.id === formData?.region)?.name}
+            <CardTitle className="font-sans text-lg">
+              {regionsRefs?.find(ref => ref.id === formData?.region)?.name}
             </CardTitle>
           </CardHeader>
           <EditIcon className="absolute w-4 h-4 top-2 right-2" />
         </Card>
 
         <Card
-          className="relative w-full cursor-pointer hover:bg-accent-yellow"
+          className="relative w-full cursor-pointer hover:bg-accent-yellow dark:hover:bg-accent-blue"
           onClick={() => setStep(2)}
         >
           <CardHeader>
             <CardDescription>
               Which meals should we help you with?
             </CardDescription>
-            <CardTitle className="flex flex-wrap gap-2 pt-2 font-sans text-xl">
-              {formData?.frequencyOfMeals.map(meal => (
+            <CardTitle className="flex flex-wrap gap-2 pt-2 font-sans text-lg">
+              {formData?.frequencyOfMeals?.map(meal => (
                 <Badge key={meal} className="capitalize" variant={'outline'}>
-                  {frequencyOfMealsRefs.find(ref => ref.id === meal)?.name}
+                  {frequencyOfMealsRefs?.find(ref => ref.id === meal)?.name}
                 </Badge>
               ))}
             </CardTitle>
@@ -229,17 +344,17 @@ const FormReview = () => {
         </Card>
 
         <Card
-          className="relative w-full cursor-pointer hover:bg-accent-yellow"
+          className="relative w-full cursor-pointer hover:bg-accent-yellow dark:hover:bg-accent-blue"
           onClick={() => setStep(3)}
         >
           <CardHeader>
             <CardDescription>
               Do you have any meal preferences for your child?
             </CardDescription>
-            <CardTitle className="flex flex-wrap gap-2 pt-2 font-sans text-xl">
-              {formData?.dietaryPreferences.map(pref => (
+            <CardTitle className="flex flex-wrap gap-2 pt-2 font-sans text-lg">
+              {formData?.dietaryPreferences?.map(pref => (
                 <Badge key={pref} className="capitalize" variant={'outline'}>
-                  {dietaryPreferencesRefs.find(ref => ref.id === pref)?.name}
+                  {dietaryPreferencesRefs?.find(ref => ref.id === pref)?.name}
                 </Badge>
               ))}
             </CardTitle>
@@ -248,17 +363,23 @@ const FormReview = () => {
         </Card>
 
         <Card
-          className="relative w-full cursor-pointer hover:bg-accent-yellow"
+          className="relative w-full cursor-pointer hover:bg-accent-yellow dark:hover:bg-accent-blue"
           onClick={() => setStep(3)}
         >
           <CardHeader>
             <CardDescription>Allergies</CardDescription>
-            <CardTitle className="flex flex-wrap gap-2 pt-2 font-sans text-xl">
-              {formData?.allergies.map(allergy => (
-                <Badge key={allergy} className="capitalize" variant={'outline'}>
-                  {allergy}
-                </Badge>
-              ))}
+            <CardTitle className="flex flex-wrap gap-2 pt-2 font-sans text-lg">
+              {formData?.allergies?.length > 0
+                ? formData?.allergies?.map(allergy => (
+                    <Badge
+                      key={allergy}
+                      className="capitalize"
+                      variant={'outline'}
+                    >
+                      {allergy}
+                    </Badge>
+                  ))
+                : 'None'}
             </CardTitle>
           </CardHeader>
           <EditIcon className="absolute w-4 h-4 top-2 right-2" />

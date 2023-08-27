@@ -1,3 +1,4 @@
+import { useAuth } from '@/providers/supabase-auth-provider'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -34,14 +35,8 @@ const formSchema = z
   .required()
 
 const Step1 = () => {
-  const {
-    handleNext,
-    formData,
-    setFormData,
-    frequencyOfMealsRefs,
-    regionsRefs,
-    setStep,
-  } = useFormState()
+  const { handleNext, formData, setFormData, setStep } = useFormState()
+  const { frequencyOfMeals, regions, user } = useAuth()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -60,7 +55,7 @@ const Step1 = () => {
       ...values,
     })
 
-    updateLocalStorage('onboarding', {
+    updateLocalStorage(`onboarding-${user?.id}`, {
       ...values,
       step: 3,
     })
@@ -72,7 +67,7 @@ const Step1 = () => {
   return (
     <FormLayout title="Build your preferences">
       <Form {...form}>
-        <form className="flex flex-col col-span-2 gap-6 my-4">
+        <form className="flex flex-col col-span-2 gap-8 my-4">
           {/* Regions */}
           <FormField
             control={form.control}
@@ -92,9 +87,8 @@ const Step1 = () => {
                         )}
                       >
                         {field.value
-                          ? regionsRefs.find(
-                              region => region.id === field.value,
-                            )?.name
+                          ? regions?.find(region => region.id === field.value)
+                              ?.name
                           : 'Select region'}
                         <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
                       </Button>
@@ -105,7 +99,7 @@ const Step1 = () => {
                       <CommandInput placeholder="Search region..." />
                       <CommandEmpty>No region found.</CommandEmpty>
                       <CommandGroup>
-                        {regionsRefs.map(region => (
+                        {regions?.map(region => (
                           <CommandItem
                             value={String(region.id)}
                             key={region.id}
@@ -140,7 +134,7 @@ const Step1 = () => {
             render={() => (
               <FormItem>
                 <FormLabel>Which meals should we help you with?</FormLabel>
-                {frequencyOfMealsRefs.map(meal => (
+                {frequencyOfMeals?.map(meal => (
                   <FormField
                     key={meal.id}
                     control={form.control}

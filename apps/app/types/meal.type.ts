@@ -4,6 +4,8 @@ interface Meal {
   ingredients: string[]
   recipe: string[]
   nutrients: string[]
+  bgColor: string
+  textColor: string
 }
 
 interface Day {
@@ -16,4 +18,19 @@ interface WeeklyMeal {
   days: Day[]
 }
 
-export type { Meal, Day, WeeklyMeal }
+interface ShoppingItem {
+  name: string
+  qty: string
+}
+
+interface Shopping {
+  category: string
+  items: ShoppingItem[]
+}
+
+interface WeeklyShopping {
+  week: number
+  shopping: Shopping[]
+}
+
+export type { Day, Meal, Shopping, ShoppingItem, WeeklyMeal, WeeklyShopping }
