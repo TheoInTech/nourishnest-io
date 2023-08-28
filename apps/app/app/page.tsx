@@ -18,8 +18,9 @@ import { TypographyList } from 'ui/components/typography/list'
 
 const HomePage = () => {
   const { profile } = useAuth()
-  const mealPlans = profile?.meal_plans?.[0]?.plan as unknown as WeeklyMeal[]
+  const mealPlans = profile?.meal_plans?.plan as unknown as WeeklyMeal[]
 
+  console.log('profile', profile)
   return (
     <div className="px-16 py-4 text-center">
       <TypographyH1>Generated Meal Plans</TypographyH1>

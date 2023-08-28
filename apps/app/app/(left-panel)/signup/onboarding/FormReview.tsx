@@ -84,11 +84,12 @@ const FormReview = () => {
     )
 
     const region = regionsRefs?.find(ref => ref.id === formData.region)?.name
+    const age = birthdayToAge(new Date(formData.birthday))
 
     // 1. Build the prompt
     const prompt = `
     Child details:
-    1. Age of child - ${birthdayToAge(new Date(formData.birthday))}
+    1. Age of child - ${age}
     2. Dietary Preferences - ${dietaryPreferences.join(', ')}
     3. Child's Weight - ${formData.weight} ${formData.weightType}
     4. Allergies - ${formData.allergies.join(', ')}

@@ -6,19 +6,20 @@ import IconLock from '@/public/assets/icons/lock.svg'
 import IconLogout from '@/public/assets/icons/logout.svg'
 import IconUnlock from '@/public/assets/icons/unlock.svg'
 import { IMealPlans } from '@/types/collections.type'
-import { SubscriptionStatus } from '@/types/generic'
+import { SubscriptionStatus } from '@/types/subscriptions.type'
 import { createClient } from '@/utils/supabase-browser'
 import axios from 'axios'
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import CaretRightIcon from 'public/assets/icons/caret-right.svg'
 import ConfirmGenerateIcon from 'public/assets/icons/confirm-generate.svg'
 import HamburgerIcon from 'public/assets/icons/hamburger.svg'
 import LogoFitSenpai from 'public/logo-fit-senpai.svg'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from 'ui/components/button'
 import { DestructiveAlert } from 'ui/components/error-alert'
+import { PageLoading } from 'ui/components/page-loading'
 import { SuccessAlert } from 'ui/components/success-alert'
 import birthdayToAge from 'ui/utils/helpers/birthdayToAge'
 import getGeneratedWeeks from 'ui/utils/helpers/getGeneratedWeeks'
@@ -37,6 +38,7 @@ const Sidebar = ({
   selectedWeek: number
   unlockableWeeks: Array<{ start: number; end: number }> | []
 }) => {
+  const router = useRouter()
   const {
     signOut,
     profile,
@@ -47,6 +49,11 @@ const Sidebar = ({
     frequencyOfMeals: frequencyOfMealsRefs,
   } = useAuth()
   const supabase = createClient()
+  const {
+    subscriptions,
+    meal_plans: mealPlan,
+    shopping_plans: shoppingPlan,
+  } = profile
   const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false)
   const [isSidebarVisible, setIsSidebarVisible] = useState(false)
   const sidebarRef = useRef<HTMLDivElement | null>(null)
@@ -58,38 +65,15 @@ const Sidebar = ({
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [successMessage, setSuccessMessage] = useState<string>('')
 
-  const subscription = useMemo(
-    () =>
-      profile?.subscriptions?.reduce((latest, current) => {
-        return new Date(latest.created_at ?? '') >
-          new Date(current.created_at ?? '')
-          ? latest
-          : current
-      }),
-    [profile?.subscriptions],
-  )
-
-  const mealPlan = useMemo(
-    () =>
-      profile?.meal_plans?.reduce((latest, current) => {
-        return new Date(latest.created_at ?? '') >
-          new Date(current.created_at ?? '')
-          ? latest
-          : current
-      }),
-    [profile?.meal_plans],
-  )
-
-  const shoppingPlan = useMemo(
-    () =>
-      profile?.shopping_plans?.reduce((latest, current) => {
-        return new Date(latest.created_at ?? '') >
-          new Date(current.created_at ?? '')
-          ? latest
-          : current
-      }),
-    [profile?.shopping_plans],
-  )
+  const subscription =
+    subscriptions &&
+    subscriptions?.length > 0 &&
+    subscriptions?.reduce((latest, current) => {
+      return new Date(latest.created_at ?? '') >
+        new Date(current.created_at ?? '')
+        ? latest
+        : current
+    })
 
   const handleLogOut = async () => {
     try {
@@ -216,6 +200,11 @@ const Sidebar = ({
         reject(error)
       }
     })
+  }
+
+  const handleClickUnlock = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    router.push(process.env.NEXT_PUBLIC_LEMON_SQUEEZY_PRODUCT_URL ?? '/billing')
   }
 
   const handleGeneratePlans = async (e: any) => {
@@ -364,12 +353,8 @@ const Sidebar = ({
 
   return (
     <>
-      <DestructiveAlert
-        message={errorMessage}
-      />
-      <SuccessAlert
-        message={successMessage}
-      />
+      <DestructiveAlert message={errorMessage} />
+      <SuccessAlert message={successMessage} />
       {isGenerateModalOpen && (
         <Modal>
           <div className="flex flex-col gap-8 p-4 items-center justify-center max-w-[400px]">
@@ -422,15 +407,7 @@ const Sidebar = ({
               >
                 Cancel
               </Button>
-              <Button
-                href={
-                  process.env.NEXT_PUBLIC_LEMON_SQUEEZY_PRODUCT_URL ??
-                  '/billing'
-                }
-                variant="neon-green"
-              >
-                Yes, unlock
-              <Button>
+              <Button onClick={handleClickUnlock}>Yes, unlock</Button>
             </div>
           </div>
         </Modal>
@@ -438,7 +415,7 @@ const Sidebar = ({
       {isLoggingOut && <PageLoading />}
       <Button
         onClick={toggleSidebar}
-        variant="transparent"
+        variant="ghost"
         className="absolute top-0 right-0 z-20 w-auto p-4 lg:hidden"
       >
         <HamburgerIcon className="w-12 h-12" />
@@ -481,7 +458,7 @@ const Sidebar = ({
                   />
                 ) : (
                   <div className="text-5xl font-bold uppercase text-neon-green font-body">
-                    {getInitials(profile?.first_name, profile?.last_name)}
+                    {getInitials(profile?.nickname)}
                   </div>
                 )}
               </div>

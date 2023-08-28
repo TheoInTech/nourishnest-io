@@ -28,8 +28,8 @@ export interface ISubscriptionInvoices extends ISubscriptions {
 
 export interface ICompleteProfile extends IProfile {
   subscriptions: ISubscriptionInvoices[] | null | undefined
-  meal_plans: IMealPlans[] | null | undefined
-  shopping_plans: IShoppingPlans[] | null | undefined
+  meal_plans: IMealPlans | null | undefined
+  shopping_plans: IShoppingPlans | null | undefined
   dietary_preferences: IDietaryPreferences[] | undefined
   frequency_of_meals: IFrequencyOfMeals[] | undefined
   regions: IRegions | undefined
@@ -38,7 +38,7 @@ export interface ICompleteProfile extends IProfile {
 interface ContextI {
   /**** User ****/
   user: User | null
-  profile: ICompleteProfile | null | undefined
+  profile: ICompleteProfile
   error: any
   profileIsLoading: boolean
   mutateProfile: any
@@ -73,7 +73,7 @@ interface ContextI {
 const Context = createContext<ContextI>({
   /**** User ****/
   user: null,
-  profile: null,
+  profile: {} as ICompleteProfile,
   error: null,
   profileIsLoading: true,
   mutateProfile: null,
@@ -122,18 +122,8 @@ export default function SupabaseAuthProvider({
     if (serverSession) {
       // TODO: FIX THIS SHIT
       const { data: profile, error } = (await supabase
-        .from('profile')
-        .select(
-          `
-          *,
-          subscriptions(*, invoices(*)),
-          meal_plans(*),
-          shopping_plans(*),
-          profile_dietary_preferences(*, dietary_preferences(*)),
-          profile_frequency_of_meals(*, frequency_of_meals(*)),
-          regions(*)
-          `,
-        )
+        .from('profile_view')
+        .select('*')
         .eq('user_id', serverSession?.user?.id)
         .maybeSingle()) as any
 
