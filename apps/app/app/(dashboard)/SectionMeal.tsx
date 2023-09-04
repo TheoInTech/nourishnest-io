@@ -16,11 +16,13 @@ import { cn } from 'ui/lib/utils'
 
 interface ISectionMeal {
   plan: WeeklyMeal
-  onFavorite: (
+  onRate: (
     e: React.MouseEvent<HTMLButtonElement>,
     targetWeek: number,
     targetDayNumber: number,
     targetMealName: string,
+    rating: Rating,
+    shouldRemove: boolean,
   ) => void
 }
 
@@ -34,7 +36,7 @@ const handleMealCardClick = (
   alert(meal.name)
 }
 
-const SectionMeal = ({ plan, onFavorite }: ISectionMeal) => {
+const SectionMeal = ({ plan, onRate }: ISectionMeal) => {
   const [isFullView, setIsFullView] = useState<boolean>(false)
 
   return (
@@ -100,6 +102,16 @@ const SectionMeal = ({ plan, onFavorite }: ISectionMeal) => {
                         <Button
                           className="z-50 p-0 hover:bg-inherit"
                           variant={'ghost'}
+                          onClick={event =>
+                            onRate(
+                              event,
+                              plan.week,
+                              weekDay.day,
+                              meal.name,
+                              Rating.Bad,
+                              meal.rating === Rating.Bad,
+                            )
+                          }
                         >
                           <ThumbsDown
                             className={cn(
@@ -112,6 +124,16 @@ const SectionMeal = ({ plan, onFavorite }: ISectionMeal) => {
                         <Button
                           className="z-50 p-0 hover:bg-inherit"
                           variant={'ghost'}
+                          onClick={event =>
+                            onRate(
+                              event,
+                              plan.week,
+                              weekDay.day,
+                              meal.name,
+                              Rating.Good,
+                              meal.rating === Rating.Bad,
+                            )
+                          }
                         >
                           <ThumbsUp
                             className={cn(
@@ -123,8 +145,15 @@ const SectionMeal = ({ plan, onFavorite }: ISectionMeal) => {
                         <Button
                           className="z-50 p-0 hover:bg-inherit"
                           variant={'ghost'}
-                          onClick={e =>
-                            onFavorite(e, plan.week, weekDay.day, meal.name)
+                          onClick={event =>
+                            onRate(
+                              event,
+                              plan.week,
+                              weekDay.day,
+                              meal.name,
+                              Rating.Love,
+                              meal.rating === Rating.Love,
+                            )
                           }
                         >
                           <Heart

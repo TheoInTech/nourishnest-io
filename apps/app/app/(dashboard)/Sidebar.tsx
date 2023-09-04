@@ -43,7 +43,7 @@ const Sidebar = () => {
       {isLoggingOut && <PageLoading />}
       <aside
         id="main-sidebar"
-        className="col-span-2 p-8 overflow-auto shadow-xl h-fit bg-card rounded-xl"
+        className="h-[90%] col-span-2 p-8 overflow-auto shadow-xl bg-card rounded-xl hide-scrollbar"
         aria-label="Sidebar"
       >
         <div className="flex flex-col row-span-5 gap-8 overflow-y-hidden">
@@ -118,7 +118,7 @@ const Sidebar = () => {
                 asChild
                 variant="ghost"
                 className={cn(
-                  'w-full flex justify-start gap-4 text-sm',
+                  'w-full flex justify-start gap-4 text-base',
                   pathname === route.path && 'bg-primary/20',
                 )}
               >
@@ -128,7 +128,7 @@ const Sidebar = () => {
             <Button
               onClick={handleLogOut}
               variant="ghost"
-              className="flex justify-start w-full gap-4 text-sm text-destructive"
+              className="flex justify-start w-full gap-4 text-base text-destructive"
             >
               <LogOut className="w-5 h-5" />
               Log Out

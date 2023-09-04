@@ -17,7 +17,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <div className="grid h-full grid-cols-9 p-8 overflow-hidden">
+    <div className="grid w-full h-full grid-cols-9 p-8 overflow-hidden">
       {(isPageLoading || pageLoadingMessage !== '') && (
         <PageLoading text={pageLoadingMessage} />
       )}

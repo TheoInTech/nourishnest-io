@@ -40,13 +40,18 @@ const SectionGrocery = ({ plan }: ISectionGrocery) => {
                 {appendEmoji(shop.category)}
               </CardTitle>
             </CardHeader>
-            <CardContent className="grid items-center grid-cols-5 gap-2 my-4 text-sm">
-              <div></div>
-              <div className="col-span-2 font-bold">Item</div>
-              <div className="col-span-2 font-bold">Qty</div>
+            <CardContent className="flex flex-col items-center gap-4 my-4 text-sm">
+              <div className="grid items-center w-full grid-cols-5">
+                <div></div>
+                <div className="col-span-2 font-bold">Item</div>
+                <div className="col-span-2 font-bold">Qty</div>
+              </div>
 
               {shop?.items?.map(item => (
-                <div key={`W${plan.week}-C${shop.category}-I${item.name}`}>
+                <div
+                  key={`W${plan.week}-C${shop.category}-I${item.name}`}
+                  className="grid items-center w-full grid-cols-5"
+                >
                   <div>
                     <Checkbox />
                   </div>

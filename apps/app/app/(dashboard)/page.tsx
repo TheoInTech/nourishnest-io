@@ -36,11 +36,13 @@ const HomePage = () => {
     plan => plan?.week === Number(selectedWeek),
   ) as WeeklyShopping
 
-  const handleFavoriteSelect = async (
+  const handleRateSelect = async (
     e: React.MouseEvent<HTMLButtonElement>,
     targetWeek: number,
     targetDay: number,
     targetMealName: string,
+    rating: Rating,
+    shouldRemove: boolean,
   ) => {
     e.preventDefault()
     e.stopPropagation()
@@ -58,7 +60,7 @@ const HomePage = () => {
           )
 
           if (targetMeal) {
-            targetMeal.rating = Rating.Love
+            targetMeal.rating = !shouldRemove ? rating : null
           }
         }
       }
@@ -74,10 +76,19 @@ const HomePage = () => {
 
       await mutateProfile()
 
-      toast({
-        variant: 'success',
-        title: "Oh you love it! I've added it to your favorites.",
-      })
+      if (!shouldRemove) {
+        if (rating === Rating.Love) {
+          toast({
+            variant: 'success',
+            title: "Oh you love it! I've added it to your favorites.",
+          })
+        } else {
+          toast({
+            title:
+              "Thanks for the feedback! We'll use it to improve our next meal plans.",
+          })
+        }
+      }
     } catch (error: any) {
       console.error(error)
       toast({
@@ -114,7 +125,7 @@ const HomePage = () => {
         </CardHeader>
       </Card>
 
-      <SectionMeal plan={mealPlan} onFavorite={handleFavoriteSelect} />
+      <SectionMeal plan={mealPlan} onRate={handleRateSelect} />
       <SectionGrocery plan={groceryPlan} />
     </div>
   )

@@ -125,7 +125,7 @@ export default async function RootLayout({
         <SupabaseProvider>
           <SupabaseAuthProvider serverSession={session}>
             <ThemeProvider attribute="class" defaultTheme="light">
-              <main className="flex items-center min-h-screen overflow-hidden bg-background">
+              <main className="flex items-center w-full min-h-screen overflow-hidden bg-background">
                 {children}
                 <Toaster />
                 <Analytics />
