@@ -83,74 +83,70 @@ const Step1 = () => {
   return (
     <FormLayout title="Create your child's profile">
       <Form {...form}>
-        <form className="flex flex-col col-span-2 gap-8 my-4">
-          <div className="flex gap-4">
-            {/* Nickname */}
-            <FormField
-              control={form.control}
-              name="nickName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="Nickname" autoFocus {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <form className="flex flex-col col-span-2 gap-4 my-4">
+          {/* Nickname */}
+          <FormField
+            control={form.control}
+            name="nickName"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input placeholder="Nickname" autoFocus {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            {/* Birthday */}
-            <FormField
-              control={form.control}
-              name="birthday"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={'outline'}
-                          className={cn(
-                            'pl-3 text-left py-6 font-normal hover:bg-accent-yellow dark:hover:text-accent-yellow-foreground',
-                            !field.value && 'text-muted-foreground',
-                          )}
-                        >
-                          {field.value ? (
-                            format(new Date(field.value), 'PPP')
-                          ) : (
-                            <span>Child&apos;s birthday</span>
-                          )}
-                          <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={new Date(field.value)}
-                        onSelect={value => field.onChange(value?.toISOString())}
-                        disabled={date => date > new Date()}
-                        fromYear={new Date().getFullYear() - 3}
-                        toYear={new Date(
-                          new Date().setMonth(new Date().getMonth() - 5),
-                        ).getFullYear()}
-                        toMonth={
-                          new Date(
-                            new Date().setMonth(new Date().getMonth() - 5),
-                          )
-                        }
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormDescription className="flex items-center gap-2 text-[10px]">
-                    <InfoIcon className="w-3 h-3" /> Your child&apos;s birthday
-                    is used to calculate the age.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          {/* Birthday */}
+          <FormField
+            control={form.control}
+            name="birthday"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={'outline'}
+                        className={cn(
+                          'pl-3 text-left py-6 font-normal hover:bg-accent-yellow dark:hover:text-accent-yellow-foreground',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                      >
+                        {field.value ? (
+                          format(new Date(field.value), 'PPP')
+                        ) : (
+                          <span>Child&apos;s birthday</span>
+                        )}
+                        <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={new Date(field.value)}
+                      onSelect={value => field.onChange(value?.toISOString())}
+                      disabled={date => date > new Date()}
+                      fromYear={new Date().getFullYear() - 3}
+                      toYear={new Date(
+                        new Date().setMonth(new Date().getMonth() - 5),
+                      ).getFullYear()}
+                      toMonth={
+                        new Date(new Date().setMonth(new Date().getMonth() - 5))
+                      }
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormDescription className="flex items-center gap-2 text-[10px]">
+                  <InfoIcon className="w-3 h-3" /> Your child&apos;s birthday is
+                  used to calculate the age.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <div className="flex gap-4">
             {/* Weight */}

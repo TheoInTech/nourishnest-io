@@ -120,7 +120,6 @@ export default function SupabaseAuthProvider({
   // Get Profile
   const getProfile = async () => {
     if (serverSession) {
-      // TODO: FIX THIS SHIT
       const { data: profile, error } = (await supabase
         .from('profile_view')
         .select('*')
@@ -150,7 +149,6 @@ export default function SupabaseAuthProvider({
   const getRegions = async () => {
     const { data: regions, error } = await supabase.from('regions').select('*')
 
-    console.log('getRegions', error)
     if (error) {
       console.error(error)
       return []

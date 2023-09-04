@@ -4,71 +4,71 @@
 
 @layer base {
   :root {
-    --background: 0 0% 96%;
-    --foreground: 222 11% 23%;
+    --background: 164 37% 91%;
+    --foreground: 222 11% 18%;
 
-    --card: 0 0% 96%;
-    --card-foreground: 222 11% 23%;
+    --card: 0 0% 97%;
+    --card-foreground: 222 11% 18%;
 
-    --popover: 0 0% 96%;
-    --popover-foreground: 222 11% 23%;
+    --popover: 0 0% 97%;
+    --popover-foreground: 222 11% 18%;
 
     --primary: 164 37% 66%;
-    --primary-foreground: 0 0% 96%;
+    --primary-foreground: 222 11% 18%;
 
     --secondary: 24 100% 64%;
-    --secondary-foreground: 0 0% 96%;
+    --secondary-foreground: 0 0% 97%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 222 11% 23%;
+    --muted: 0 0% 97%;
+    --muted-foreground: 222 11% 18%;
 
     --accent-blue: 212 37% 66%;
-    --accent-blue-foreground: 0 0% 96%;
+    --accent-blue-foreground: 0 0% 97%;
 
     --accent-yellow: 53 100% 82%;
-    --accent-yellow-foreground: 222 11% 23%;
+    --accent-yellow-foreground: 222 11% 18%;
 
     --destructive: 0 100% 64%;
-    --destructive-foreground: 0 0% 96%;
+    --destructive-foreground: 0 0% 97%;
 
-    --border: 222 11% 23%;
-    --input: 222 11% 23%;
-    --ring: 0 0% 96%;
+    --border: 222 11% 18%;
+    --input: 222 11% 18%;
+    --ring: 0 0% 97%;
 
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222 11% 23%;
-    --foreground: 0 0% 96%;
+    --background: 222 11% 18%;
+    --foreground: 0 0% 97%;
 
-    --card: 222 11% 23%;
-    --card-foreground: 0 0% 96%;
+    --card: 222 11% 18%;
+    --card-foreground: 0 0% 97%;
 
-    --popover: 222 11% 23%;
-    --popover-foreground: 0 0% 96%;
+    --popover: 222 11% 18%;
+    --popover-foreground: 0 0% 97%;
 
     --primary: 164 37% 66%;
-    --primary-foreground: 0 0% 96%;
+    --primary-foreground: 0 0% 97%;
 
     --secondary: 24 100% 64%;
-    --secondary-foreground: 0 0% 96%;
+    --secondary-foreground: 0 0% 97%;
 
-    --muted: 222 11% 23%;
-    --muted-foreground: 0 0% 96%;
+    --muted: 222 11% 18%;
+    --muted-foreground: 0 0% 97%;
 
     --accent-blue: 212 37% 66%;
-    --accent-blue-foreground: 222 11% 23%;
+    --accent-blue-foreground: 222 11% 18%;
 
     --accent-yellow: 53 100% 82%;
-    --accent-yellow-foreground: 222 11% 23%;
+    --accent-yellow-foreground: 222 11% 18%;
 
     --destructive: 0 100% 64%;
-    --destructive-foreground: 0 0% 96%;
+    --destructive-foreground: 0 0% 97%;
 
-    --border: 0 0% 96%;
-    --input: 0 0% 96%;
-    --ring: 222 11% 23%;
+    --border: 0 0% 97%;
+    --input: 0 0% 97%;
+    --ring: 222 11% 18%;
 
     --radius: 0.5rem;
   }
@@ -110,17 +110,26 @@ html {
 
 /* Scrollbar handle (the moving part) */
 ::-webkit-scrollbar-thumb {
-  background-color: hsl(212 37% 66%); /* Gray color */
+  background-color: hsl(164 37% 66%); /* Gray color */
   border-radius: 5px; /* Slightly rounded corners */
 }
 
 /* Hide scrollbar for Firefox */
 body {
   scrollbar-width: thin; /* Make it thin */
-  scrollbar-color: hsl(212 37% 66%) transparent; /* Thumb gray and track transparent */
+  scrollbar-color: hsl(164 37% 66%) transparent; /* Thumb gray and track transparent */
 }
 
 /* Hide scrollbar for Internet Explorer and Edge */
 body::-ms-overflow-style {
   display: none; /* Hide scrollbar */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, newer versions of Opera */
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE 10+ */
+  scrollbar-width: none; /* Firefox */
 }

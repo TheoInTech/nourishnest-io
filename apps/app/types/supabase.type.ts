@@ -156,7 +156,7 @@ export interface Database {
           created_at: string
           id: number
           plan: Json[]
-          profile_id: number | null
+          profile_id: number
           updated_at: string
           user_id: string
         }
@@ -164,7 +164,7 @@ export interface Database {
           created_at?: string
           id?: number
           plan: Json[]
-          profile_id?: number | null
+          profile_id: number
           updated_at: string
           user_id: string
         }
@@ -172,7 +172,7 @@ export interface Database {
           created_at?: string
           id?: number
           plan?: Json[]
-          profile_id?: number | null
+          profile_id?: number
           updated_at?: string
           user_id?: string
         }
@@ -181,6 +181,12 @@ export interface Database {
             foreignKeyName: 'meal_plans_profile_id_fkey'
             columns: ['profile_id']
             referencedRelation: 'profile'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'meal_plans_profile_id_fkey'
+            columns: ['profile_id']
+            referencedRelation: 'profile_view'
             referencedColumns: ['id']
           },
           {
@@ -267,6 +273,7 @@ export interface Database {
           dietary_preferences_id: number
           id: number
           profile_id: number
+          updated_at: string
           user_id: string
         }
         Insert: {
@@ -274,6 +281,7 @@ export interface Database {
           dietary_preferences_id: number
           id?: number
           profile_id: number
+          updated_at?: string
           user_id: string
         }
         Update: {
@@ -281,6 +289,7 @@ export interface Database {
           dietary_preferences_id?: number
           id?: number
           profile_id?: number
+          updated_at?: string
           user_id?: string
         }
         Relationships: [
@@ -297,6 +306,12 @@ export interface Database {
             referencedColumns: ['id']
           },
           {
+            foreignKeyName: 'profile_dietary_preferences_profile_id_fkey'
+            columns: ['profile_id']
+            referencedRelation: 'profile_view'
+            referencedColumns: ['id']
+          },
+          {
             foreignKeyName: 'profile_dietary_preferences_user_id_fkey'
             columns: ['user_id']
             referencedRelation: 'users'
@@ -310,6 +325,7 @@ export interface Database {
           frequency_of_meals_id: number
           id: number
           profile_id: number
+          updated_at: string
           user_id: string
         }
         Insert: {
@@ -317,6 +333,7 @@ export interface Database {
           frequency_of_meals_id: number
           id?: number
           profile_id: number
+          updated_at?: string
           user_id: string
         }
         Update: {
@@ -324,6 +341,7 @@ export interface Database {
           frequency_of_meals_id?: number
           id?: number
           profile_id?: number
+          updated_at?: string
           user_id?: string
         }
         Relationships: [
@@ -337,6 +355,12 @@ export interface Database {
             foreignKeyName: 'profile_frequency_of_meals_profile_id_fkey'
             columns: ['profile_id']
             referencedRelation: 'profile'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'profile_frequency_of_meals_profile_id_fkey'
+            columns: ['profile_id']
+            referencedRelation: 'profile_view'
             referencedColumns: ['id']
           },
           {
@@ -373,31 +397,37 @@ export interface Database {
           created_at: string
           id: number
           plan: Json[]
-          profile_id: number | null
+          profile_id: number
           updated_at: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           created_at?: string
           id?: number
           plan: Json[]
-          profile_id?: number | null
+          profile_id: number
           updated_at?: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           created_at?: string
           id?: number
           plan?: Json[]
-          profile_id?: number | null
+          profile_id?: number
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
             foreignKeyName: 'shopping_plans_profile_id_fkey'
             columns: ['profile_id']
             referencedRelation: 'profile'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'shopping_plans_profile_id_fkey'
+            columns: ['profile_id']
+            referencedRelation: 'profile_view'
             referencedColumns: ['id']
           },
           {
@@ -504,6 +534,12 @@ export interface Database {
             referencedColumns: ['id']
           },
           {
+            foreignKeyName: 'subscriptions_profile_id_fkey'
+            columns: ['profile_id']
+            referencedRelation: 'profile_view'
+            referencedColumns: ['id']
+          },
+          {
             foreignKeyName: 'subscriptions_user_id_fkey'
             columns: ['user_id']
             referencedRelation: 'users'
@@ -555,7 +591,47 @@ export interface Database {
       }
     }
     Views: {
-      [_ in never]: never
+      profile_view: {
+        Row: {
+          allergies: string[] | null
+          availed_weeks: number | null
+          avatar_url: string | null
+          birthday: string | null
+          created_at: string | null
+          dietary_preferences: Json | null
+          email: string | null
+          frequency_of_meals: Json | null
+          generated_weeks: number | null
+          id: number | null
+          invoices: Json | null
+          meal_plans: Json | null
+          nickname: string | null
+          region: Json | null
+          region_id: number | null
+          shopping_plans: Json | null
+          subscriptions: Json | null
+          tags: string[] | null
+          updated_at: string | null
+          user_id: string | null
+          weight: number | null
+          weight_type: string | null
+          with_teeth: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'profile_region_id_fkey'
+            columns: ['region_id']
+            referencedRelation: 'regions'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'profile_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never

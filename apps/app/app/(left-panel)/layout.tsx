@@ -4,6 +4,7 @@ import 'server-only'
 import { ThemeToggle } from 'ui/components/theme-toggle'
 import { TypographyH1 } from 'ui/components/typography/h1'
 import { TypographyH2 } from 'ui/components/typography/h2'
+import meta from 'ui/lib/metadata.json'
 
 export default async function LeftPanelLayout({
   children,
@@ -30,10 +31,10 @@ export default async function LeftPanelLayout({
               <Logo className="flex-shrink-0 p-2 rounded-lg w-28 h-28 bg-primary" />
               <div className="flex flex-col justify-center gap-2 ">
                 <TypographyH1 className="font-light text-primary">
-                  Nourish Nest
+                  {meta.name}
                 </TypographyH1>
-                <TypographyH2 className="font-sans text-sm font-normal md:text-lg">
-                  Your trusted companion in nourishing and nurturing your child.
+                <TypographyH2 className="font-sans text-xs font-normal md:text-base">
+                  {meta.description}
                 </TypographyH2>
               </div>
             </div>

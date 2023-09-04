@@ -1,4 +1,5 @@
 import { useAuth } from '@/providers/supabase-auth-provider'
+import { Day, Meal, WeeklyMeal, WeeklyShopping } from '@/types/meal.type'
 import { Json } from '@/types/supabase.type'
 import { createClient } from '@/utils/supabase-browser'
 import axios from 'axios'
@@ -6,6 +7,7 @@ import { format } from 'date-fns'
 import { EditIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import secureLocalStorage from 'react-secure-storage'
 import { Badge } from 'ui/components/badge'
 import {
   Card,
@@ -105,29 +107,26 @@ const FormReview = () => {
         'meal',
         prompt,
         frequencyOfMeals.join(', '),
-      )) as Json[]
+      )) as unknown as WeeklyMeal
 
       if (!isValidMealPlan(mealResponse)) {
         throw new Error('Invalid meal plan generated.')
       }
+
       // 3. Generate the grocery list via API
       setPageLoadingMessage('Generating your grocery list...')
       const shoppingResponse = (await generateFromOpenAi(
         'shopping',
         prompt,
-      )) as Json[]
+      )) as unknown as WeeklyShopping & Json
 
       if (!isValidShoppingList(shoppingResponse)) {
         throw new Error('Invalid grocery list generated.')
       }
 
-      if (shoppingResponse?.length === 0 || mealResponse?.length === 0) {
-        setErrorMessage('There was a problem generating your meal plan.')
-        setPageLoadingMessage('')
-        return
-      }
-
       setPageLoadingMessage('Finalizing your profile...')
+
+      // Profile
       const { data, error } = await supabase
         .from('profile')
         .insert({
@@ -159,7 +158,6 @@ const FormReview = () => {
       await mutateProfile()
       const profile = { ...data }
 
-      console.log('profile', profile)
       if (profile) {
         await wait(500)
         const dietaryPreferences = await formData?.dietaryPreferences?.map(
@@ -171,7 +169,6 @@ const FormReview = () => {
             updated_at: new Date().toISOString(),
           }),
         )
-        console.log('dietaryPreferences', dietaryPreferences)
         const { error: dietError } = await supabase
           .from('profile_dietary_preferences')
           .insert(dietaryPreferences)
@@ -186,7 +183,6 @@ const FormReview = () => {
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         }))
-        console.log('frequencyOfMeals', frequencyOfMeals)
         const { error: fomError } = await supabase
           .from('profile_frequency_of_meals')
           .insert(frequencyOfMeals)
@@ -194,11 +190,28 @@ const FormReview = () => {
         if (fomError)
           throw new Error('Error in saving the frequency of your meals.')
 
+        // Meal Plan
         await wait(500)
+        const fromDate = new Date()
+        const toDate = new Date(fromDate)
+        toDate.setDate(fromDate.getDate() + 7)
         const { error: mealError } = await supabase
           .from('meal_plans')
           .insert({
-            plan: [mealResponse],
+            plan: [
+              {
+                ...mealResponse,
+                days: mealResponse.days.map((day: Day) => ({
+                  ...day,
+                  plan: day.plan.map((meal: Meal) => ({
+                    ...meal,
+                    rating: null,
+                  })),
+                })),
+                fromDate: fromDate.toISOString(),
+                toDate: toDate.toISOString(),
+              },
+            ],
             user_id: user?.id ?? '',
             profile_id: profile?.id,
             created_at: new Date().toISOString(),
@@ -206,7 +219,6 @@ const FormReview = () => {
           })
           .select()
         if (mealError) throw new Error('Error in saving your meal plan.')
-        console.log('meal_plans saved')
 
         const { error: shoppingError } = await supabase
           .from('shopping_plans')
@@ -221,10 +233,9 @@ const FormReview = () => {
           ])
           .select()
         if (shoppingError) throw new Error('Error in saving your grocery list.')
-        console.log('shopping_plans saved')
 
         await mutateProfile()
-        await localStorage?.removeItem(`onboarding-${user?.id}`)
+        await secureLocalStorage?.removeItem(`onboarding-${user?.id}`)
         await router.push('/')
       }
     } catch (error: any) {

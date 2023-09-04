@@ -5,7 +5,7 @@ export const PageLoading = ({ text }: { text?: string }) => {
         <span className="absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping bg-primary"></span>
         <span className="relative inline-flex w-12 h-12 rounded-full bg-primary"></span>
       </span>
-      <p className="px-8 text-lg font-medium text-center text-dim lg:px-0">
+      <p className="px-8 text-lg font-medium text-center lg:px-0">
         {text} <br /> Please don&apos;t refresh your browser...
       </p>
     </div>
