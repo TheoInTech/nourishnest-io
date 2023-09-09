@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 164 37% 85%;
+    --background: 164 37% 92%;
     --foreground: 222 11% 18%;
 
     --card: 0 0% 97%;
@@ -132,4 +132,36 @@ body::-ms-overflow-style {
 .hide-scrollbar {
   -ms-overflow-style: none; /* IE 10+ */
   scrollbar-width: none; /* Firefox */
+}
+
+/* .card-fade::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background-image: linear-gradient(
+    to bottom,
+    hsl(0 0% 97%),
+    hsla(164 37% 92% / 10%)
+  );
+  pointer-events: none;
+  z-index: 9999;
+} */
+
+.card-fade::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background-image: linear-gradient(
+    to top,
+    hsl(0 0% 97%),
+    hsla(164 37% 92% / 10%)
+  );
+  pointer-events: none;
+  z-index: 9999;
 }

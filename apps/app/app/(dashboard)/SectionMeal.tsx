@@ -1,12 +1,7 @@
-import { Meal, MealTypeColor, Rating, WeeklyMeal } from '@/types/meal.type'
-import {
-  ArrowUpRight,
-  Expand,
-  Heart,
-  Minimize2,
-  ThumbsDown,
-  ThumbsUp,
-} from 'lucide-react'
+import Reaction from '@/components/Reaction'
+import { Meal, MealTypeColor, WeeklyMeal } from '@/types/meal.type'
+import { ArrowUpRight, Expand, Minimize2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Badge } from 'ui/components/badge'
 import { Button } from 'ui/components/button'
@@ -16,28 +11,25 @@ import { cn } from 'ui/lib/utils'
 
 interface ISectionMeal {
   plan: WeeklyMeal
-  onRate: (
-    e: React.MouseEvent<HTMLButtonElement>,
-    targetWeek: number,
-    targetDayNumber: number,
-    targetMealName: string,
-    rating: Rating,
-    shouldRemove: boolean,
-  ) => void
 }
 
-const handleMealCardClick = (
-  e: React.MouseEvent<HTMLDivElement>,
-  meal: Meal,
-) => {
-  e.preventDefault()
-  e.stopPropagation()
-
-  alert(meal.name)
-}
-
-const SectionMeal = ({ plan, onRate }: ISectionMeal) => {
+const SectionMeal = ({ plan }: ISectionMeal) => {
   const [isFullView, setIsFullView] = useState<boolean>(false)
+  const router = useRouter()
+
+  const handleMealCardClick = (
+    e: React.MouseEvent<HTMLDivElement>,
+    week: number,
+    day: number,
+    meal: Meal,
+  ) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    router.push(
+      `/meal?week=${week}&day=${day}&type=${meal.type}&name=${meal.name}`,
+    )
+  }
 
   return (
     <Card
@@ -58,7 +50,7 @@ const SectionMeal = ({ plan, onRate }: ISectionMeal) => {
           </Button>
         </CardTitle>
       </CardHeader>
-      <CardContent className="grid h-full grid-cols-1 gap-4 px-4 pt-4 pb-32 overflow-auto hide-scrollbar md:grid-cols-2">
+      <CardContent className="grid h-full grid-cols-1 gap-4 px-4 pt-4 pb-32 overflow-auto hide-scrollbar md:grid-cols-2 card-fade">
         {plan?.days?.map(weekDay => (
           <Card key={`W${plan.week}-D${weekDay.day}`} className="p-4">
             <CardHeader className="px-2 pt-0">
@@ -81,7 +73,9 @@ const SectionMeal = ({ plan, onRate }: ISectionMeal) => {
                   </div>
                   <Card
                     className="relative z-10 border border-gray-300 rounded-tl-none shadow-none cursor-pointer hover:bg-accent-yellow/20"
-                    onClick={e => handleMealCardClick(e, meal)}
+                    onClick={e =>
+                      handleMealCardClick(e, plan.week, weekDay.day, meal)
+                    }
                   >
                     <ArrowUpRight className="absolute top-0 right-0 w-4 h-4 m-2 text-muted-foreground/60" />
                     <CardHeader className="p-4">
@@ -98,72 +92,13 @@ const SectionMeal = ({ plan, onRate }: ISectionMeal) => {
                           </Badge>
                         ))}
                       </div>
-                      <div className="flex self-end gap-4">
-                        <Button
-                          className="z-50 p-0 hover:bg-inherit"
-                          variant={'ghost'}
-                          onClick={event =>
-                            onRate(
-                              event,
-                              plan.week,
-                              weekDay.day,
-                              meal.name,
-                              Rating.Bad,
-                              meal.rating === Rating.Bad,
-                            )
-                          }
-                        >
-                          <ThumbsDown
-                            className={cn(
-                              'w-4 h-4 hover:fill-accent-yellow',
-                              meal.rating === Rating.Bad &&
-                                'fill-accent-yellow',
-                            )}
-                          />
-                        </Button>
-                        <Button
-                          className="z-50 p-0 hover:bg-inherit"
-                          variant={'ghost'}
-                          onClick={event =>
-                            onRate(
-                              event,
-                              plan.week,
-                              weekDay.day,
-                              meal.name,
-                              Rating.Good,
-                              meal.rating === Rating.Bad,
-                            )
-                          }
-                        >
-                          <ThumbsUp
-                            className={cn(
-                              'w-4 h-4 hover:fill-primary',
-                              meal.rating === Rating.Good && 'fill-primary',
-                            )}
-                          />
-                        </Button>
-                        <Button
-                          className="z-50 p-0 hover:bg-inherit"
-                          variant={'ghost'}
-                          onClick={event =>
-                            onRate(
-                              event,
-                              plan.week,
-                              weekDay.day,
-                              meal.name,
-                              Rating.Love,
-                              meal.rating === Rating.Love,
-                            )
-                          }
-                        >
-                          <Heart
-                            className={cn(
-                              'w-4 h-4 hover:fill-destructive',
-                              meal.rating === Rating.Love && 'fill-destructive',
-                            )}
-                          />
-                        </Button>
-                      </div>
+
+                      <Reaction
+                        week={plan.week}
+                        day={weekDay.day}
+                        name={meal.name}
+                        rating={meal.rating}
+                      />
                     </CardHeader>
                     <div
                       className="absolute top-0 left-0 w-1 h-full rounded-bl-lg"

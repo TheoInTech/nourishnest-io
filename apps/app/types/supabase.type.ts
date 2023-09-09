@@ -197,6 +197,30 @@ export interface Database {
           },
         ]
       }
+      micronutrients: {
+        Row: {
+          created_at: string
+          description: string
+          id: number
+          long_name: string
+          short_name: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: number
+          long_name: string
+          short_name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: number
+          long_name?: string
+          short_name?: string
+        }
+        Relationships: []
+      }
       profile: {
         Row: {
           allergies: string[]

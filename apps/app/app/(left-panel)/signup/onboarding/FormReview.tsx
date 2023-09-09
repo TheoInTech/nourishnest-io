@@ -2,6 +2,8 @@ import { useAuth } from '@/providers/supabase-auth-provider'
 import { Day, Meal, WeeklyMeal, WeeklyShopping } from '@/types/meal.type'
 import { Json } from '@/types/supabase.type'
 import { createClient } from '@/utils/supabase-browser'
+import { WeeklyMealSchema } from '@/validators/meal.validator'
+import { WeeklyShoppingSchema } from '@/validators/shopping.validator'
 import axios from 'axios'
 import { format } from 'date-fns'
 import { EditIcon } from 'lucide-react'
@@ -16,8 +18,8 @@ import {
   CardTitle,
 } from 'ui/components/card'
 import { TypographyP } from 'ui/components/typography/p'
+import { useToast } from 'ui/components/use-toast'
 import birthdayToAge from 'ui/utils/helpers/birthdayToAge'
-import isValidJSON from 'ui/utils/helpers/isValidJSON'
 import isValidMealPlan from 'ui/utils/helpers/isValidMealPlan'
 import isValidShoppingList from 'ui/utils/helpers/isValidShoppingList'
 import updateLocalStorage from 'ui/utils/helpers/updateLocalStorage'
@@ -28,6 +30,7 @@ import NextAndBack from './NextAndBack'
 
 const FormReview = () => {
   const router = useRouter()
+  const { toast } = useToast()
   const {
     formData,
     setStep,
@@ -51,6 +54,7 @@ const FormReview = () => {
     frequencyOfMeals: string = '',
   ) {
     return new Promise(async (resolve, reject) => {
+      const invalidMessage = `Invalid ${plan} plan generated. Please try again.`
       try {
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_HOST_URL}/api/free/generate-${plan}`,
@@ -59,19 +63,20 @@ const FormReview = () => {
             frequencyOfMeals,
           },
         )
-        const stringify = JSON.stringify(response)
-        if (!isValidJSON(stringify))
-          reject('Invalid plan generated. Please try again.')
+        console.log('response?.data', response?.data)
+        const dataResponse = JSON.parse(JSON.stringify(response?.data))
 
-        const parsedResponse = JSON.parse(stringify)
-
-        if (plan === 'meal' && parsedResponse?.data?.[0]?.days.length < 7) {
-          reject('Generated meal plan is less than expected. Please try again.')
+        let validated
+        if (plan === 'meal') {
+          validated = await WeeklyMealSchema.parse(dataResponse)
+        } else if (plan === 'shopping') {
+          validated = await WeeklyShoppingSchema.parse(dataResponse)
         }
 
-        resolve(parsedResponse?.data)
+        resolve(dataResponse)
       } catch (error) {
-        reject(error)
+        console.error(error)
+        reject(invalidMessage)
       }
     })
   }
@@ -239,13 +244,11 @@ const FormReview = () => {
         await router.push('/')
       }
     } catch (error: any) {
-      setErrorMessage(
-        `${
-          error?.message + ' Please try again.' ||
-          error + ' Please try again.' ||
-          'Something went wrong.'
-        }`,
-      )
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: error?.message || error || 'Something went wrong.',
+      })
       console.error(error)
       setPageLoadingMessage('')
     }

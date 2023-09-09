@@ -18,8 +18,8 @@ import getInitials from 'ui/utils/helpers/getInitials'
 const ROUTES = [
   { name: '🥑 My plans', path: '/' },
   { name: '🦸🏼 Be a super parent!', path: '#' },
-  { name: '⚙️ Settings', path: '#' },
   { name: '📣 Promotions', path: '#' },
+  { name: '⚙️ Settings', path: '#' },
 ]
 
 const Sidebar = () => {
@@ -38,6 +38,11 @@ const Sidebar = () => {
     }
   }
 
+  const unlockable =
+    profile.availed_weeks - profile.generated_weeks < 0
+      ? 0
+      : profile.availed_weeks - profile.generated_weeks
+
   return (
     <>
       {isLoggingOut && <PageLoading />}
@@ -46,7 +51,7 @@ const Sidebar = () => {
         className="h-[90%] col-span-2 p-8 overflow-auto shadow-xl bg-card rounded-xl hide-scrollbar"
         aria-label="Sidebar"
       >
-        <div className="flex flex-col row-span-5 gap-8 overflow-y-hidden">
+        <div className="flex flex-col row-span-5 gap-6 overflow-y-hidden">
           <div className="flex flex-col gap-4 md:flex-row">
             <Logo className="flex-shrink-0 w-10 h-10 p-2 rounded-lg bg-primary" />
             <div className="flex flex-col justify-center gap-2 ">
@@ -104,9 +109,11 @@ const Sidebar = () => {
             <Card className="border border-gray-200">
               <CardContent className="flex flex-col items-center justify-center p-2 text-center">
                 <span className="text-2xl font-black text-primary">
-                  {profile.availed_weeks}
+                  {unlockable}
                 </span>
-                <span className="text-xs text-primary-foreground">availed</span>
+                <span className="text-xs text-primary-foreground">
+                  unlockable
+                </span>
               </CardContent>
             </Card>
           </div>
@@ -118,7 +125,7 @@ const Sidebar = () => {
                 asChild
                 variant="ghost"
                 className={cn(
-                  'w-full flex justify-start gap-4 text-base',
+                  'w-full flex justify-start gap-4 text-lg',
                   pathname === route.path && 'bg-primary/20',
                 )}
               >
@@ -128,7 +135,7 @@ const Sidebar = () => {
             <Button
               onClick={handleLogOut}
               variant="ghost"
-              className="flex justify-start w-full gap-4 text-base text-destructive"
+              className="flex justify-start w-full gap-4 text-lg text-destructive"
             >
               <LogOut className="w-5 h-5" />
               Log Out

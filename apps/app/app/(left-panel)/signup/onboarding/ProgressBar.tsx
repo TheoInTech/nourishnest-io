@@ -5,7 +5,6 @@ import { useFormState } from './FormContext'
 
 const ProgressBar = () => {
   const { step } = useFormState()
-  const totalSteps = 3
 
   return (
     <div className="box-border flex flex-col w-full gap-2 my-4 text-xs">

@@ -13,3 +13,5 @@ export type ISubscriptions =
   Database['public']['Tables']['subscriptions']['Row']
 export type IInvoices = Database['public']['Tables']['invoices']['Row']
 export type IProfile = Database['public']['Tables']['profile']['Row']
+export type IMicronutrients =
+  Database['public']['Tables']['micronutrients']['Row']

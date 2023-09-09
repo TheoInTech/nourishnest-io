@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
   Actual Response:
   Strictly generate 1 week worth (7 days) of complete meal plan including ${frequencyOfMeals}. Per 1 week should include 7 days of meal plans, start on week 1.
   You are an assistant who can only speak JSON. You can't use normal text. Write the response strictly as a valid JSON format just like this example (be creative, this is just an example):
-  { "week": <week_number>, "days": [ { "day": <day_number>, "plan": [ { "type": "<meal type>", "name": "<meal name>", bgColor: "<pastel background color of meal>", textColor: "<text color>", "ingredients": [ "<ingredients>" ], "recipe": [ "<recipe>" ], "nutrients": [ "<micronutrients>" ] } ] } ] }
+  { "week": <week_number>, "days": [ { "day": <day_number>, "plan": [ { "type": "<meal type>", "name": "<meal name>", bgColor: "<pastel background color of meal>", textColor: "<text color>", "ingredients": [ "<non-numbered ingredients>" ], "recipe": [ "<non-numbered recipe>" ], "nutrients": [ "<micronutrients>" ] } ] } ] }
   `
 
   const completePrompt = `${BASELINE_CONTEXT}\n\n${prompt}`

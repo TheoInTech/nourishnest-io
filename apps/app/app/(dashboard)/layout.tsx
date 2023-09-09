@@ -26,9 +26,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         <Announcement />
         {children}
       </div>
-      <div className="flex flex-col col-span-2 gap-6">
+      <div className="flex flex-col h-screen col-span-2 gap-6">
         <SectionFavorites />
-        <Card className="h-full max-h-[20%] flex items-center justify-center">
+        <Card className="h-full max-h-[25%] flex items-center justify-center">
           <CardHeader>
             <CardTitle>Ad space</CardTitle>
           </CardHeader>
