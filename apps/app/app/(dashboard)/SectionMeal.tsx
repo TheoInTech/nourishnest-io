@@ -50,7 +50,7 @@ const SectionMeal = ({ plan }: ISectionMeal) => {
           </Button>
         </CardTitle>
       </CardHeader>
-      <CardContent className="grid h-full grid-cols-1 gap-4 px-4 pt-4 pb-32 overflow-auto hide-scrollbar md:grid-cols-2 card-fade">
+      <CardContent className="grid h-full grid-cols-1 gap-4 px-4 pt-4 pb-32 overflow-auto md:grid-cols-2 card-fade">
         {plan?.days?.map(weekDay => (
           <Card key={`W${plan.week}-D${weekDay.day}`} className="p-4">
             <CardHeader className="px-2 pt-0">
@@ -63,7 +63,7 @@ const SectionMeal = ({ plan }: ISectionMeal) => {
                   className="flex flex-col"
                 >
                   <div
-                    className={`uppercase text-[8px] font-bold px-3 py-1 bg-primary-foreground/10 rounded-t-lg w-fit`}
+                    className={`uppercase text-[8px] dark:text-muted font-bold px-3 py-1 bg-primary-foreground/10 rounded-t-lg w-fit`}
                     style={{
                       background:
                         MealTypeColor[meal.type] || MealTypeColor.default,

@@ -70,6 +70,7 @@ const Reaction = ({ week, day, name, rating }: IReaction) => {
           })
         } else {
           toast({
+            variant: 'info',
             title:
               "Thanks for the feedback! We'll use it to improve our next meal plans.",
           })

@@ -7,6 +7,9 @@ export function appendEmoji(category: string): string {
     protein: '🍗',
     dairy: '🥛',
     veg: '🥦',
+    veggie: '🥦',
+    vegatable: '🥦',
+    produce: '🥦',
     pantry: '🍞',
     fruit: '🍎',
     grain: '🍚',
@@ -25,6 +28,11 @@ export function appendEmoji(category: string): string {
     household: '🧹',
     oil: '🍶',
     pasta: '🍝',
+    sauce: '🍅',
+    soup: '🥣',
+    bread: '🥖',
+    'dry goods': '🍞',
+    meat: '🥩',
   }
 
   const emoji = findClosestEmoji(category, emojiMap)

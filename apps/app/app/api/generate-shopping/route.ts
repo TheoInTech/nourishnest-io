@@ -44,12 +44,15 @@ export async function POST(req: NextRequest) {
     { "week": <week_number>, "shopping": [ { "category": "<category>", "bgColor": "<background color>", "textColor": "<textColor>", "items": [ { "name": "<item name>", "qty": "<quantity> <unit>" } ] }, { "category": "<category>", "bgColor": "<background color>", "textColor": "<textColor>", "items": [ { "name": "<item name>", "qty": "<quantity> <unit>" } ] } ] }
     `
 
-  const completePrompt = `${BASELINE_CONTEXT}\n\n${prompt}`
+  // const completePrompt = `${BASELINE_CONTEXT}\n\n${prompt}`
 
   try {
     const payload = {
       model: 'gpt-3.5-turbo-16k',
-      messages: [{ role: 'system', content: `${completePrompt}` }],
+      messages: [
+        { role: 'system', content: BASELINE_CONTEXT },
+        { role: 'user', content: prompt },
+      ],
       temperature: 0.9, // Higher values means the model will take more risks
       top_p: 1,
       frequency_penalty: 0, // Number between -2.0 and 2.0

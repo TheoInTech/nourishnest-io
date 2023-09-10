@@ -32,7 +32,7 @@ const SectionGrocery = ({ plan }: ISectionGrocery) => {
           </Button>
         </CardTitle>
       </CardHeader>
-      <CardContent className="grid h-full grid-cols-1 gap-4 px-4 pt-4 pb-32 overflow-auto hide-scrollbar md:grid-cols-2 card-fade">
+      <CardContent className="grid h-full grid-cols-1 gap-4 px-4 pt-4 pb-32 overflow-auto md:grid-cols-2 card-fade">
         {plan?.shopping?.map(shop => (
           <Card key={`W${plan.week}-C${shop.category}`} className="p-4">
             <CardHeader className="px-2 pt-0 pb-2 border-b border-b-gray-300">

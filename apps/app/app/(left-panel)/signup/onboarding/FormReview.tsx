@@ -2,13 +2,10 @@ import { useAuth } from '@/providers/supabase-auth-provider'
 import { Day, Meal, WeeklyMeal, WeeklyShopping } from '@/types/meal.type'
 import { Json } from '@/types/supabase.type'
 import { createClient } from '@/utils/supabase-browser'
-import { WeeklyMealSchema } from '@/validators/meal.validator'
-import { WeeklyShoppingSchema } from '@/validators/shopping.validator'
-import axios from 'axios'
 import { format } from 'date-fns'
 import { EditIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import secureLocalStorage from 'react-secure-storage'
 import { Badge } from 'ui/components/badge'
 import {
@@ -20,8 +17,7 @@ import {
 import { TypographyP } from 'ui/components/typography/p'
 import { useToast } from 'ui/components/use-toast'
 import birthdayToAge from 'ui/utils/helpers/birthdayToAge'
-import isValidMealPlan from 'ui/utils/helpers/isValidMealPlan'
-import isValidShoppingList from 'ui/utils/helpers/isValidShoppingList'
+import { generateFromOpenAi } from 'ui/utils/helpers/generateFromOpenAi'
 import updateLocalStorage from 'ui/utils/helpers/updateLocalStorage'
 import wait from 'ui/utils/helpers/wait'
 import { useFormState } from './FormContext'
@@ -37,7 +33,6 @@ const FormReview = () => {
     setHasReachedFinalCheck,
     hasReachedFinalCheck,
     setPageLoadingMessage,
-    setErrorMessage,
   } = useFormState()
   const {
     user,
@@ -47,39 +42,9 @@ const FormReview = () => {
     frequencyOfMeals: frequencyOfMealsRefs,
   } = useAuth()
   const supabase = createClient()
-
-  async function generateFromOpenAi(
-    plan: string,
-    prompt: string = '',
-    frequencyOfMeals: string = '',
-  ) {
-    return new Promise(async (resolve, reject) => {
-      const invalidMessage = `Invalid ${plan} plan generated. Please try again.`
-      try {
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_HOST_URL}/api/free/generate-${plan}`,
-          {
-            prompt,
-            frequencyOfMeals,
-          },
-        )
-        console.log('response?.data', response?.data)
-        const dataResponse = JSON.parse(JSON.stringify(response?.data))
-
-        let validated
-        if (plan === 'meal') {
-          validated = await WeeklyMealSchema.parse(dataResponse)
-        } else if (plan === 'shopping') {
-          validated = await WeeklyShoppingSchema.parse(dataResponse)
-        }
-
-        resolve(dataResponse)
-      } catch (error) {
-        console.error(error)
-        reject(invalidMessage)
-      }
-    })
-  }
+  const [savedMealResponse, setSavedMealResponse] = useState<WeeklyMeal>()
+  const [savedShoppingResponse, setSavedShoppingResponse] =
+    useState<WeeklyShopping>()
 
   const onSubmit = async () => {
     const dietaryPreferences = formData.dietaryPreferences?.map(
@@ -107,26 +72,32 @@ const FormReview = () => {
 
     try {
       // 2. Generate the meal plan via API
-      setPageLoadingMessage('Generating your meal plan...')
-      const mealResponse = (await generateFromOpenAi(
-        'meal',
-        prompt,
-        frequencyOfMeals.join(', '),
-      )) as unknown as WeeklyMeal
+      let mealResponse
+      if (!savedMealResponse) {
+        setPageLoadingMessage('Generating your meal plan...')
+        mealResponse = (await generateFromOpenAi(
+          'meal',
+          prompt,
+          frequencyOfMeals.join(', '),
+        )) as unknown as WeeklyMeal
 
-      if (!isValidMealPlan(mealResponse)) {
-        throw new Error('Invalid meal plan generated.')
+        setSavedMealResponse(mealResponse)
+      } else {
+        mealResponse = savedMealResponse as unknown as WeeklyMeal
       }
 
       // 3. Generate the grocery list via API
-      setPageLoadingMessage('Generating your grocery list...')
-      const shoppingResponse = (await generateFromOpenAi(
-        'shopping',
-        prompt,
-      )) as unknown as WeeklyShopping & Json
-
-      if (!isValidShoppingList(shoppingResponse)) {
-        throw new Error('Invalid grocery list generated.')
+      let shoppingResponse
+      if (!savedShoppingResponse) {
+        setPageLoadingMessage('Generating your grocery list...')
+        shoppingResponse = (await generateFromOpenAi(
+          'shopping',
+          JSON.stringify(mealResponse),
+        )) as unknown as WeeklyShopping & Json
+        setSavedShoppingResponse(shoppingResponse)
+      } else {
+        shoppingResponse = savedShoppingResponse as unknown as WeeklyShopping &
+          Json
       }
 
       setPageLoadingMessage('Finalizing your profile...')
@@ -154,7 +125,11 @@ const FormReview = () => {
         .single()
 
       if (error) {
-        setErrorMessage('There was a problem creating your profile.')
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'There was a problem creating your profile.',
+        })
         console.error('error:', error)
         setPageLoadingMessage('')
         return

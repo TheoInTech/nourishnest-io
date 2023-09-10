@@ -4,9 +4,14 @@ import { NextRequest, NextResponse } from 'next/server'
 export const runtime = 'edge'
 
 export async function POST(req: NextRequest) {
-  const { prompt, frequencyOfMeals } = (await req.json()) as {
+  const {
+    prompt,
+    frequencyOfMeals,
+    startOnWeek = 1,
+  } = (await req.json()) as {
     prompt: string
     frequencyOfMeals: string
+    startOnWeek: number
   }
 
   if (!prompt || prompt === '') {
@@ -46,17 +51,20 @@ export async function POST(req: NextRequest) {
   - for text colors, use #333740 (black) or white #F5F5F5 (white) depending on the background color. For example, if the background color is #E7B878, the text color should be #333740 (black).
   
   Actual Response:
-  Strictly generate 1 week worth (7 days) of complete meal plan including ${frequencyOfMeals}. Per 1 week should include 7 days of meal plans, start on week 1.
+  Strictly generate 1 week worth (7 days) of complete meal plan including ${frequencyOfMeals}. Per 1 week should include 7 days of meal plans, start on week ${startOnWeek}.
   You are an assistant who can only speak JSON. You can't use normal text. Write the response strictly as a valid JSON format just like this example (be creative, this is just an example):
-  { "week": <week_number>, "days": [ { "day": <day_number>, "plan": [ { "type": "<meal type>", "name": "<meal name>", bgColor: "<pastel background color of meal>", textColor: "<text color>", "ingredients": [ "<non-numbered ingredients>" ], "recipe": [ "<non-numbered recipe>" ], "nutrients": [ "<micronutrients>" ] } ] } ] }
+  { "week": ${startOnWeek}, "days": [ { "day": <day_number>, "plan": [ { "type": "<meal type>", "name": "<meal name>", bgColor: "<pastel background color of meal>", textColor: "<text color>", "ingredients": [ "<non-numbered ingredients>" ], "recipe": [ "<recipe list without the numbers at the start>" ], "nutrients": [ "<micronutrients>" ] } ] } ] }
   `
 
-  const completePrompt = `${BASELINE_CONTEXT}\n\n${prompt}`
+  // const completePrompt = `${BASELINE_CONTEXT}\n\n${prompt}`
 
   try {
     const payload = {
       model: 'gpt-3.5-turbo-16k',
-      messages: [{ role: 'system', content: `${completePrompt}` }],
+      messages: [
+        { role: 'system', content: BASELINE_CONTEXT },
+        { role: 'user', content: prompt },
+      ],
       temperature: 0.9, // Higher values means the model will take more risks
       top_p: 1,
       frequency_penalty: 0, // Number between -2.0 and 2.0

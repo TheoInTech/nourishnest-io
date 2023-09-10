@@ -36,6 +36,10 @@
     --ring: 0 0% 97%;
 
     --radius: 0.5rem;
+
+    --success: 121 39% 68%;
+    --info: 177 60% 69%;
+    --warning: 26 80% 63%;
   }
 
   .dark {
@@ -71,6 +75,10 @@
     --ring: 222 11% 18%;
 
     --radius: 0.5rem;
+
+    --success: 121 39% 68%;
+    --info: 177 60% 69%;
+    --warning: 26 80% 63%;
   }
 }
 
@@ -94,8 +102,7 @@ html {
 
 /* Hide default scrollbar for Webkit browsers (Chrome, Safari) */
 ::-webkit-scrollbar {
-  width: 8px; /* Width of the vertical scrollbar */
-  height: 8px; /* Height of the horizontal scrollbar */
+  width: 6px; /* Width of the vertical scrollbar */
 }
 
 /* Remove scrollbar buttons for Webkit browsers */
@@ -111,7 +118,7 @@ html {
 /* Scrollbar handle (the moving part) */
 ::-webkit-scrollbar-thumb {
   background-color: hsl(164 37% 66%); /* Gray color */
-  border-radius: 5px; /* Slightly rounded corners */
+  border-radius: 4px; /* Slightly rounded corners */
 }
 
 /* Hide scrollbar for Firefox */
@@ -156,12 +163,95 @@ body::-ms-overflow-style {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 80px;
+  height: 40px;
   background-image: linear-gradient(
     to top,
     hsl(0 0% 97%),
     hsla(164 37% 92% / 10%)
   );
   pointer-events: none;
-  z-index: 9999;
+  z-index: 99;
+}
+
+/* Make clicks pass-through */
+#nprogress {
+  pointer-events: none;
+}
+
+#nprogress .bar {
+  background: #89c9b8;
+
+  position: fixed;
+  z-index: 1031;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 2px;
+}
+
+/* Fancy blur effect */
+#nprogress .peg {
+  display: block;
+  position: absolute;
+  right: 0px;
+  width: 100px;
+  height: 100%;
+  box-shadow: 0 0 10px #89c9b8, 0 0 5px #89c9b8;
+  opacity: 1;
+
+  -webkit-transform: rotate(3deg) translate(0px, -4px);
+  -ms-transform: rotate(3deg) translate(0px, -4px);
+  transform: rotate(3deg) translate(0px, -4px);
+}
+
+/* Remove these to get rid of the spinner */
+#nprogress .spinner {
+  display: block;
+  position: fixed;
+  z-index: 1031;
+  top: 15px;
+  right: 15px;
+}
+
+#nprogress .spinner-icon {
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+
+  border: solid 2px transparent;
+  border-top-color: #89c9b8;
+  border-left-color: #89c9b8;
+  border-radius: 50%;
+
+  -webkit-animation: nprogress-spinner 400ms linear infinite;
+  animation: nprogress-spinner 400ms linear infinite;
+}
+
+.nprogress-custom-parent {
+  overflow: hidden;
+  position: relative;
+}
+
+.nprogress-custom-parent #nprogress .spinner,
+.nprogress-custom-parent #nprogress .bar {
+  position: absolute;
+}
+
+@-webkit-keyframes nprogress-spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes nprogress-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

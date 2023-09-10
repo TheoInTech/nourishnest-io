@@ -9,13 +9,14 @@ import {
 import { ReactNode } from 'react'
 import { AlertDialogFooter, AlertDialogHeader } from './alert-dialog'
 
-interface IConfirmModal {
+export interface IConfirmModal {
   isOpen: boolean
   title?: string | ReactNode
   description?: string | ReactNode
   closeButton?: string | ReactNode
   confirmButton?: string | ReactNode
   icon?: ReactNode
+  onCancel?: any
   onConfirm?: any
   children?: ReactNode
 }
@@ -27,6 +28,7 @@ export const ConfirmModal = ({
   closeButton,
   confirmButton,
   icon,
+  onCancel,
   onConfirm,
   children,
 }: IConfirmModal) => {
@@ -42,7 +44,11 @@ export const ConfirmModal = ({
         </AlertDialogHeader>
         {children}
         <AlertDialogFooter>
-          {closeButton && <AlertDialogCancel>{closeButton}</AlertDialogCancel>}
+          {closeButton && (
+            <AlertDialogCancel onClick={onCancel}>
+              {closeButton}
+            </AlertDialogCancel>
+          )}
           {confirmButton && (
             <AlertDialogAction onClick={onConfirm}>
               {confirmButton}

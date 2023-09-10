@@ -5,11 +5,17 @@ import { useRouter } from 'next/navigation'
 import { Button } from 'ui/components/button'
 import { cn } from 'ui/lib/utils'
 
-const BackToDashboard = ({ className }: { className?: string }) => {
+const BackToDashboard = ({
+  className,
+  week,
+}: {
+  className?: string
+  week: string | null
+}) => {
   const router = useRouter()
   return (
     <Button
-      onClick={() => router.push('/')}
+      onClick={() => router.push(week ? `/?week=${week}` : '/')}
       variant={'ghost'}
       className={cn(
         'self-start w-auto p-0 mt-4 text-sm text-muted-foreground hover:bg-transparent hover:text-muted-foreground/70',

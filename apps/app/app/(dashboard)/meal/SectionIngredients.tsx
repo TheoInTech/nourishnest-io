@@ -15,7 +15,9 @@ const SectionIngredients = ({ data }: { data: string[] }) => {
         <TypographyList className="gap-4">
           {data && data.length > 0 ? (
             data?.map((ingredient: string) => (
-              <li key={ingredient}>{ingredient}</li>
+              <li key={ingredient} className="text-base">
+                {ingredient}
+              </li>
             ))
           ) : (
             <>No ingredients found.</>

@@ -12,7 +12,11 @@ const SectionRecipe = ({ data }: { data: string[] }) => {
       <CardContent className="flex flex-col gap-4 p-6">
         <TypographyList className="gap-4">
           {data && data.length > 0 ? (
-            data?.map((recipe: string) => <li key={recipe}>{recipe}</li>)
+            data?.map((recipe: string) => (
+              <li key={recipe} className="text-base">
+                {recipe}
+              </li>
+            ))
           ) : (
             <>No recipes found.</>
           )}

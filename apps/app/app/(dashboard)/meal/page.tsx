@@ -7,7 +7,7 @@ import { useAuth } from '@/providers/supabase-auth-provider'
 import { WeeklyMeal } from '@/types/meal.type'
 import { useSearchParams } from 'next/navigation'
 import { useMemo } from 'react'
-import { Card, CardHeader, CardTitle } from 'ui/components/card'
+import { Card, CardContent, CardHeader, CardTitle } from 'ui/components/card'
 import SectionIngredients from './SectionIngredients'
 import SectionMicronutrients from './SectionMicronutrients'
 import SectionRecipe from './SectionRecipe'
@@ -30,15 +30,13 @@ const MealDetailPage = () => {
   if (!meal) {
     return (
       <div className="flex flex-col gap-4">
-        <BackToDashboard />
+        <BackToDashboard week={week} />
 
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              Looks like you don&apos;t have that meal. Head back to the
-              dashboard.
-            </CardTitle>
-          </CardHeader>
+          <CardContent className="flex items-center justify-center p-4 text-base md:p-16">
+            Looks like you don&apos;t have that meal. Head back to the
+            dashboard.
+          </CardContent>
         </Card>
       </div>
     )
@@ -46,7 +44,7 @@ const MealDetailPage = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <BackToDashboard />
+      <BackToDashboard week={week} />
 
       <Card>
         <CardHeader style={{ borderTop: `8px solid ${meal.bgColor}` }}>

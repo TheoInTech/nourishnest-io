@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import Logo from 'public/assets/logo-white.svg'
 import { useState } from 'react'
+import { Badge } from 'ui/components/badge'
 import { Button } from 'ui/components/button'
 import { Card, CardContent } from 'ui/components/card'
 import { PageLoading } from 'ui/components/page-loading'
@@ -16,10 +17,10 @@ import { cn } from 'ui/lib/utils'
 import getInitials from 'ui/utils/helpers/getInitials'
 
 const ROUTES = [
-  { name: '🥑 My plans', path: '/' },
-  { name: '🦸🏼 Be a super parent!', path: '#' },
-  { name: '📣 Promotions', path: '#' },
-  { name: '⚙️ Settings', path: '#' },
+  { name: '🥑 My plans', path: '/', isDisabled: false },
+  { name: '🦸🏼 Be a super parent!', path: '#', isDisabled: true },
+  { name: '📣 Promotions', path: '#', isDisabled: true },
+  { name: '⚙️ Settings', path: '#', isDisabled: false },
 ]
 
 const Sidebar = () => {
@@ -48,17 +49,18 @@ const Sidebar = () => {
       {isLoggingOut && <PageLoading />}
       <aside
         id="main-sidebar"
-        className="h-[90%] col-span-2 p-8 overflow-auto shadow-xl bg-card rounded-xl hide-scrollbar"
+        className="h-[92%] col-span-2 p-8 overflow-auto shadow-xl dark:border dark:border-border bg-card rounded-xl hide-scrollbar"
         aria-label="Sidebar"
       >
         <div className="flex flex-col row-span-5 gap-6 overflow-y-hidden">
-          <div className="flex flex-col gap-4 md:flex-row">
+          <div className="relative flex flex-col items-center justify-center gap-4 md:flex-row">
             <Logo className="flex-shrink-0 w-10 h-10 p-2 rounded-lg bg-primary" />
             <div className="flex flex-col justify-center gap-2 ">
               <TypographyH1 className="text-xl md:text-xl lg:text-2xl">
                 {meta.name}
               </TypographyH1>
             </div>
+            {/* <ThemeToggle className="w-4 h-4 p-4" /> */}
           </div>
 
           <div className="relative flex flex-col items-center gap-2">
@@ -118,18 +120,28 @@ const Sidebar = () => {
             </Card>
           </div>
 
-          <div className="flex flex-col w-full h-full gap-2">
+          <div className="flex flex-col w-full h-full gap-4">
             {ROUTES.map(route => (
               <Button
                 key={route.name}
                 asChild
                 variant="ghost"
                 className={cn(
-                  'w-full flex justify-start gap-4 text-lg',
+                  'w-full flex justify-start gap-4 text-lg relative',
                   pathname === route.path && 'bg-primary/20',
+                  route.isDisabled &&
+                    'opacity-90 cursor-not-allowed hover:bg-transparent',
                 )}
+                disabled={route.isDisabled}
               >
-                <Link href={route.path}>{route.name}</Link>
+                <Link href={route.path}>
+                  {route.name}{' '}
+                  {route.isDisabled && (
+                    <Badge className="absolute right-0 z-30 text-xs -top-2 bg-secondary hover:bg-secondary">
+                      soon
+                    </Badge>
+                  )}
+                </Link>
               </Button>
             ))}
             <Button

@@ -60,7 +60,7 @@ const SectionFavorites = () => {
       <CardHeader className="shadow-md">
         <CardTitle>Favorites</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col items-start w-full h-full gap-4 p-4 overflow-auto pb-28 hide-scrollbar card-fade">
+      <CardContent className="flex flex-col items-start w-full h-full gap-4 p-4 overflow-auto pb-28 card-fade">
         {favorites.length > 0 ? (
           favorites.map(({ week, day, meal }: IFavorite) => (
             <Button

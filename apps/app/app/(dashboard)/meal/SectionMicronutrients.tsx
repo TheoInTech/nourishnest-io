@@ -79,7 +79,7 @@ const SectionMicronutrients = ({ data }: { data: string[] }) => {
             <>No micronutrients found.</>
           )}
         </div>
-        <TypographyP className="text-lg">
+        <TypographyP className="text-base">
           {micronutrients && micronutrients?.length > 0 && activeMicro
             ? activeMicro.description
             : 'No information about this yet. Please let us know if you encounter this.'}

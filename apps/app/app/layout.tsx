@@ -122,6 +122,7 @@ export default async function RootLayout({
       <body
         className={`${breeserif.variable} ${lato.variable} overflow-hidden`}
       >
+        {/* <TopProgressBar /> */}
         <SupabaseProvider>
           <SupabaseAuthProvider serverSession={session}>
             <ThemeProvider attribute="class" defaultTheme="light">

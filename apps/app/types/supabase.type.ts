@@ -658,7 +658,18 @@ export interface Database {
       }
     }
     Functions: {
-      [_ in never]: never
+      search_micronutrients: {
+        Args: {
+          micros: string[]
+        }
+        Returns: {
+          created_at: string
+          description: string
+          id: number
+          long_name: string
+          short_name: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
