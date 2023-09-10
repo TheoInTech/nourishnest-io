@@ -58,7 +58,9 @@ const SectionFavorites = () => {
   return (
     <Card className="h-full max-h-[65%] overflow-hidden">
       <CardHeader className="shadow-md">
-        <CardTitle>Favorites</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          Favorites <Heart className="w-5 h-5 fill-destructive" />
+        </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col items-start w-full h-full gap-4 p-4 overflow-auto pb-28 card-fade">
         {favorites.length > 0 ? (
@@ -69,11 +71,10 @@ const SectionFavorites = () => {
               className="grid items-center w-full grid-cols-9 text-left whitespace-nowrap"
               onClick={e => handleMealCardClick(e, week, day, meal)}
             >
-              <Heart className="col-span-2 fill-destructive justify-self-start" />
-              <span className="col-span-6 overflow-hidden text-base text-ellipsis whitespace-nowrap">
+              <span className="col-span-7 overflow-hidden text-base text-ellipsis whitespace-nowrap">
                 {meal.name}
               </span>
-              <ChevronRight className="w-4 h-4 col-span-1 justify-self-end" />
+              <ChevronRight className="w-4 h-4 col-span-2 justify-self-end" />
             </Button>
           ))
         ) : (
