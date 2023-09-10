@@ -18,7 +18,7 @@ const BackToDashboard = ({
       onClick={() => router.push(week ? `/?week=${week}` : '/')}
       variant={'ghost'}
       className={cn(
-        'self-start w-auto p-0 mt-4 text-sm text-muted-foreground hover:bg-transparent hover:text-muted-foreground/70',
+        'self-start w-auto p-0 text-sm text-muted-foreground hover:bg-transparent hover:text-muted-foreground/70',
         className,
       )}
     >

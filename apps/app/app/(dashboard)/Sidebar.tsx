@@ -137,7 +137,10 @@ const Sidebar = () => {
                 <Link href={route.path}>
                   {route.name}{' '}
                   {route.isDisabled && (
-                    <Badge className="absolute right-0 z-30 text-xs -top-2 bg-secondary hover:bg-secondary">
+                    <Badge
+                      variant={'secondary'}
+                      className="absolute right-0 z-30 text-xs -top-2 "
+                    >
                       soon
                     </Badge>
                   )}
