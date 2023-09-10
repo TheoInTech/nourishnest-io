@@ -2,7 +2,6 @@
 
 import { useAuth } from '@/providers/supabase-auth-provider'
 import React from 'react'
-import { Announcement } from 'ui/components/announcement'
 import { Card, CardHeader, CardTitle } from 'ui/components/card'
 import { PageLoading } from 'ui/components/page-loading'
 import SectionFavorites from './SectionFavorites'
@@ -23,7 +22,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       )}
       <Sidebar />
       <div className="h-screen col-span-5 px-6 pb-40 overflow-auto hide-scrollbar">
-        <Announcement />
+        {/* <Announcement /> */}
         {children}
       </div>
       <div className="flex flex-col h-screen col-span-2 gap-6">

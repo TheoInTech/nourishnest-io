@@ -45,7 +45,13 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
         .order('id', { ascending: false })
         .maybeSingle()
 
-      if (subError || profileError) {
+      if (
+        subError ||
+        profileError ||
+        !subData ||
+        !profileData ||
+        !subData?.variant_name
+      ) {
         subError && console.error('Error getting subscription: ', subError)
         profileError && console.error('Error getting profile: ', profileError)
         return res.status(500).json({

@@ -27,7 +27,7 @@ const HomePage = () => {
   ) as WeeklyShopping
 
   return (
-    <div className="flex flex-col gap-6 my-4 overflow-auto hide-scrollbar">
+    <div className="flex flex-col gap-6 overflow-auto hide-scrollbar">
       <SectionWeekTitle
         selectedWeek={selectedWeek}
         mealPlans={mealPlans}
