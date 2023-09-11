@@ -170,7 +170,7 @@ body::-ms-overflow-style {
     hsla(164 37% 92% / 10%)
   );
   pointer-events: none;
-  z-index: 99;
+  z-index: 9;
 }
 
 /* Make clicks pass-through */

@@ -110,7 +110,7 @@ const Step1 = () => {
                       <Button
                         variant={'outline'}
                         className={cn(
-                          'pl-3 text-left py-6 font-normal hover:bg-accent-yellow dark:hover:text-accent-yellow-foreground',
+                          'pl-3 text-left py-6 rounded-lg font-normal hover:bg-accent-yellow dark:hover:text-accent-yellow-foreground',
                           !field.value && 'text-muted-foreground',
                         )}
                       >

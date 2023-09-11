@@ -118,7 +118,7 @@ const Reaction = ({ week, day, name, rating }: IReaction) => {
             day,
             name,
             Rating.Good,
-            rating === Rating.Bad,
+            rating === Rating.Good,
           )
         }
       >

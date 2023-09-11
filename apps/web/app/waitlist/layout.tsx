@@ -16,7 +16,7 @@ export default async function WaitlistLayout({
 }) {
   return (
     <div className="flex w-full h-screen">
-      <div className="hidden relative md:flex bg-background justify-left overflow-hidden items-center w-full md:w-[55vw] h-full z-50">
+      <div className="hidden relative md:flex bg-primary/80 justify-left overflow-hidden items-center w-full md:w-[55vw] h-full z-50">
         <Image
           src="/assets/onboarding/left-panel.png"
           alt="Left Panel"
