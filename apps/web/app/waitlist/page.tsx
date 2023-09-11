@@ -191,7 +191,7 @@ const WaitlistPage = () => {
                                 <Button
                                   variant={'outline'}
                                   className={cn(
-                                    'pl-3 text-left font-normal hover:bg-accent-yellow dark:hover:text-accent-yellow-foreground',
+                                    'pl-3 text-left font-normal rounded-lg hover:bg-accent-yellow dark:hover:text-accent-yellow-foreground',
                                     !field.value && 'text-muted-foreground/60',
                                   )}
                                 >
