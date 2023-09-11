@@ -3,7 +3,7 @@ import crypto from 'crypto'
 import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
-function sha256(data: Buffer, secret: string): string {
+async function sha256(data: Buffer, secret: string) {
   return crypto.createHmac('sha256', secret).update(data).digest('hex')
 }
 
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     const supabase = createClient()
     const rawBody = await req.json()
     const headersList = headers()
-    const signature = sha256(rawBody, secret)
+    const signature = await sha256(rawBody, secret)
 
     if (signature !== headersList.get('x-signature')) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 403 })
