@@ -1,27 +1,23 @@
 import { createClient } from '@/utils/supabase-api'
 import crypto from 'crypto'
-import type { NextApiRequest, NextApiResponse } from 'next'
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-}
+import { headers } from 'next/headers'
+import { NextRequest, NextResponse } from 'next/server'
 
 function sha256(data: Buffer, secret: string): string {
   return crypto.createHmac('sha256', secret).update(data).digest('hex')
 }
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: NextRequest) {
   try {
     const secret = process.env.LEMONS_SQUEEZY_SIGNATURE_SECRET ?? ''
 
     const supabase = createClient()
-    const rawBody = await req.body()
+    const rawBody = await req.json()
+    const headersList = headers()
     const signature = sha256(rawBody, secret)
 
-    if (signature !== req.headers['x-signature']) {
-      return res.status(401).json({ error: 'Invalid signature' })
+    if (signature !== headersList.get('x-signature')) {
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 403 })
     }
 
     const payload = JSON.parse(rawBody.toString('utf-8'))
@@ -54,11 +50,14 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
       ) {
         subError && console.error('Error getting subscription: ', subError)
         profileError && console.error('Error getting profile: ', profileError)
-        return res.status(500).json({
-          error:
-            'Failed to get subscription or profile on subscription_payment_success',
-          data: subError || profileError,
-        })
+        return NextResponse.json(
+          {
+            error:
+              'Failed to get subscription or profile on subscription_payment_success',
+            data: subError || profileError,
+          },
+          { status: 500 },
+        )
       }
 
       const { data, error } = await supabase.from('invoices').insert([
@@ -109,13 +108,22 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
         error && console.error('Error inserting invoice: ', error)
         userError && console.error('Error update subscription: ', userError)
 
-        return res.status(500).json({
-          error: 'Failed to handle subscription_payment_success',
-          data: error || userError,
-        })
+        return NextResponse.json(
+          {
+            error: 'Failed to handle subscription_payment_success',
+            data: subError || userError,
+          },
+          { status: 500 },
+        )
       }
 
-      return res.status(200).json({ received: true, data })
+      return NextResponse.json(
+        {
+          received: true,
+          data,
+        },
+        { status: 200 },
+      )
     }
 
     // Subscriptions
@@ -127,10 +135,10 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
 
     if (!profile || !profile?.data?.user_id) {
       console.log('No profile found')
-      return res.status(500).json({ error: 'No profile found' })
+      throw new Error('No profile found')
     } else if (!subscriptionData || !payload) {
       console.log('No subscription data found')
-      return res.status(500).json({ error: 'No subscription data found' })
+      throw new Error('No subscription data found')
     }
 
     // EVENT: subscription_created
@@ -166,10 +174,16 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
 
       if (error) {
         console.log('Error inserting data: ', error)
-        return res.status(500).json({ error: 'Failed to insert data' })
+        throw new Error('Failed to insert data')
       }
 
-      return res.status(200).json({ received: true, data })
+      return NextResponse.json(
+        {
+          received: true,
+          data,
+        },
+        { status: 200 },
+      )
     }
 
     // EVENT: subscription_updated
@@ -204,13 +218,24 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
 
       if (error) {
         console.log('Error updating data: ', error)
-        return res.status(500).json({ error: 'Failed to update data' })
+        throw new Error('Failed to update data')
       }
 
-      return res.status(200).json({ received: true, data })
+      return NextResponse.json(
+        {
+          received: true,
+          data,
+        },
+        { status: 200 },
+      )
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).json({ error })
+    return NextResponse.json(
+      {
+        error,
+      },
+      { status: 500 },
+    )
   }
 }
