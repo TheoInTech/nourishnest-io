@@ -23,7 +23,7 @@ const formSchema = z
     email: z.string().email('Invalid email address'),
     password: z
       .string()
-      .min(8, 'Password must be at least 8 characters')
+      .min(6, 'Password must be at least 6 characters')
       .max(70, 'Password can only have 70 characters'),
   })
   .required()

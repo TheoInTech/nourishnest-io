@@ -49,7 +49,7 @@ const Sidebar = () => {
       {isLoggingOut && <PageLoading />}
       <aside
         id="main-sidebar"
-        className="h-[92%] col-span-2 p-8 overflow-auto shadow-xl dark:border dark:border-border bg-card rounded-xl hide-scrollbar"
+        className="h-[92%] col-span-2 p-8 max-h-[45rem] overflow-auto shadow-xl dark:border dark:border-border bg-card rounded-xl hide-scrollbar"
         aria-label="Sidebar"
       >
         <div className="flex flex-col row-span-5 gap-6 overflow-y-hidden">
