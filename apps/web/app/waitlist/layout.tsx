@@ -25,7 +25,7 @@ export default async function WaitlistLayout({
           className="object-cover object-right w-full h-full"
         />
       </div>
-      <div className="relative w-full md:w-[45vw] flex justify-center items-center h-full bg-white">
+      <div className="relative w-full md:w-[45vw] flex justify-center items-center h-full bg-white dark:bg-foreground">
         <ThemeToggle className="absolute z-30 top-5 right-10" />
 
         <main className="relative flex items-start justify-center w-full h-screen overflow-auto">

@@ -22,7 +22,7 @@ export default async function LeftPanelLayout({
           className="object-cover object-right w-full h-full"
         />
       </div>
-      <div className="relative w-full md:w-[50vw] bg-white flex justify-center items-center h-full">
+      <div className="relative w-full md:w-[50vw] bg-white dark:bg-foreground flex justify-center items-center h-full">
         <ThemeToggle className="absolute z-30 top-5 right-10" />
 
         <main className="relative flex items-start justify-center w-full h-screen overflow-auto">
