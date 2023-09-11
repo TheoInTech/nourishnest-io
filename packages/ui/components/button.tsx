@@ -1,11 +1,12 @@
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { Loader2 } from 'lucide-react'
 import * as React from 'react'
 
 import { cn } from 'ui/lib/utils'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-md px-4 py-5 text-lg font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center rounded-lg px-4 py-6 text-lg font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
@@ -13,18 +14,20 @@ const buttonVariants = cva(
         destructive:
           'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         outline:
-          'border border-input bg-background hover:bg-accent-yellow hover:text-accent-yellow-foreground',
+          'border border-input bg-white hover:bg-accent-yellow hover:text-accent-yellow-foreground',
         secondary:
           'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         tertiary:
           'bg-accent-blue text-accent-blue-foreground hover:bg-accent-blue/80 text-accent-blue-foreground',
-        ghost: 'hover:bg-accent-blue hover:text-accent-blue-foreground',
+        ghost: 'hover:bg-gray-100 hover:bg-gray-200',
         link: 'text-primary underline-offset-4 hover:underline',
+        yellow:
+          'bg-accent-yellow text-accent-yellow-foreground hover:bg-accent-yellow/60 text-accent-yellow-foreground',
       },
       size: {
-        default: 'h-10 px-4 py-2',
-        sm: 'h-9 rounded-md px-3',
-        lg: 'h-11 rounded-md px-8',
+        default: 'h-10 px-4 py-6',
+        sm: 'h-9 rounded-lg px-3',
+        lg: 'h-11 rounded-lg px-8',
         icon: 'h-10 w-10',
       },
     },
@@ -38,18 +41,39 @@ const buttonVariants = cva(
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
+  isLoading?: boolean
   asChild?: boolean
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      isLoading = false,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
     const Comp = asChild ? Slot : 'button'
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
-      />
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+            {children}
+          </>
+        ) : (
+          children
+        )}
+      </Comp>
     )
   },
 )

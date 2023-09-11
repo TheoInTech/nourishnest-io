@@ -1,5 +1,6 @@
+import { useAuth } from '@/providers/supabase-auth-provider'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus } from 'lucide-react'
+import { Minus, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Badge } from 'ui/components/badge'
@@ -14,6 +15,7 @@ import {
   FormMessage,
 } from 'ui/components/form'
 import { Input } from 'ui/components/input'
+import { Label } from 'ui/components/label'
 import updateLocalStorage from 'ui/utils/helpers/updateLocalStorage'
 import * as z from 'zod'
 import { useFormState } from './FormContext'
@@ -31,8 +33,8 @@ const formSchema = z
   .required()
 
 const Step3 = () => {
-  const { handleNext, formData, setFormData, dietaryPreferencesRefs, setStep } =
-    useFormState()
+  const { handleNext, formData, setFormData, setStep } = useFormState()
+  const { dietaryPreferences, user } = useAuth()
   const [allergies, setAllergies] = useState<Array<string>>(
     formData?.allergies ?? [],
   )
@@ -41,7 +43,7 @@ const Step3 = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      allergies: formData?.allergies ?? '',
+      allergies: formData?.allergies ?? [],
       dietaryPreferences: formData?.dietaryPreferences ?? [],
     },
   })
@@ -55,7 +57,7 @@ const Step3 = () => {
       ...values,
     })
 
-    updateLocalStorage('onboarding', {
+    updateLocalStorage(`onboarding-${user?.id}`, {
       ...values,
       step: 4,
     })
@@ -80,10 +82,17 @@ const Step3 = () => {
     }
   }
 
+  const removeAllergy = (e: any, allergy: string) => {
+    e.preventDefault()
+    const updatedAllergies = [...allergies].filter(a => a !== allergy)
+    setAllergies(updatedAllergies)
+    form.setValue('allergies', updatedAllergies)
+  }
+
   return (
     <FormLayout title="Build your preferences">
       <Form {...form}>
-        <form className="flex flex-col col-span-2 gap-6 my-4">
+        <form className="flex flex-col col-span-2 gap-8 my-4">
           {/* Dietary Preferences */}
           <FormField
             control={form.control}
@@ -93,7 +102,7 @@ const Step3 = () => {
                 <FormLabel>
                   Do you have any meal preferences for your child?
                 </FormLabel>
-                {dietaryPreferencesRefs.map(pref => (
+                {dietaryPreferences?.map(pref => (
                   <FormField
                     key={pref.id}
                     control={form.control}
@@ -132,35 +141,43 @@ const Step3 = () => {
           />
 
           {/* Allergies */}
-          <FormField
-            control={form.control}
-            name="allergies"
-            render={({ field }) => (
-              <FormItem className="relative flex flex-col">
-                <FormLabel>Allergies (optional)</FormLabel>
-                <FormControl>
-                  <div className="flex space-x-2" {...field}>
-                    <Input
-                      placeholder="peanuts, shrimp, lactose intolerance, etc."
-                      value={allergyInput}
-                      onChange={handleAllergyInputChange}
-                    />
-                    <Button onClick={handleAddAllergy} variant={'tertiary'}>
-                      <Plus className="w-5 h-5" />
-                    </Button>
-                  </div>
-                </FormControl>
-                <FormMessage />
-                <ul className="flex gap-2">
-                  {allergies.map(allergy => (
-                    <li key={allergy}>
-                      <Badge variant={'outline'}>{allergy}</Badge>
-                    </li>
-                  ))}
-                </ul>
-              </FormItem>
-            )}
-          />
+          <div className="relative flex flex-col gap-4">
+            <Label>Allergies (optional)</Label>
+            <div className="flex space-x-2">
+              <Input
+                placeholder="peanuts, shrimp, lactose intolerance, etc."
+                value={allergyInput}
+                onChange={handleAllergyInputChange}
+              />
+              <Button
+                onClick={handleAddAllergy}
+                variant={'tertiary'}
+                className="py-6"
+              >
+                <Plus className="w-6 h-6" />
+              </Button>
+            </div>
+          </div>
+          <ul className="flex gap-2">
+            {allergies.map(allergy => (
+              <li key={allergy}>
+                <Badge
+                  variant={'outline'}
+                  className="flex items-center text-lg"
+                >
+                  <Button
+                    variant={'link'}
+                    className="h-auto px-2 py-0 text-destructive"
+                    onClick={e => removeAllergy(e, allergy)}
+                  >
+                    <Minus className="w-5 h-5" />
+                  </Button>
+                  {allergy}
+                </Badge>
+                {/* Remove the allergy from the array */}
+              </li>
+            ))}
+          </ul>
         </form>
       </Form>
 

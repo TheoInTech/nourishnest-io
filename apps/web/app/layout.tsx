@@ -2,6 +2,7 @@ import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import { ThemeProvider } from 'ui/components/theme-provider'
+import meta from 'ui/lib/metadata.json'
 import './globals.css'
 
 const breeserif = localFont({
@@ -46,37 +47,16 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_HOST_URL ?? 'https://nourishnest.app',
   ),
   title: {
-    default: 'Nourish Nest - Your Parenting Partner',
-    template: '%s | Nourish Nest - Your Parenting Partner',
+    default: meta.longName,
+    template: `%s | ${meta.longName}`,
   },
-  description:
-    'Elevate your parenting game with easy, nutritious meal plans and grocery list in minutes.',
-  keywords: [
-    'child nutrition',
-    'baby meal plans',
-    'toddler meal plans',
-    'grocery lists',
-    'baby diet',
-    'toddler diet',
-    'nutrition companion',
-    'healthy child recipes',
-    'baby food',
-    'toddler food',
-    'parenting tips',
-    'Southeast Asia',
-    'Nourish Nest',
-    'meal planning',
-    'parenting companion',
-    'smart parenting',
-    'parenting app',
-    'parenting partner',
-  ],
+  description: meta.description,
+  keywords: meta.keywords,
   openGraph: {
-    title: 'Nourish Nest - Your Parenting Partner',
-    description:
-      'Elevate your parenting game with easy, nutritious meal plans and grocery list in minutes.',
+    title: meta.longName,
+    description: meta.description,
     url: process.env.NEXT_PUBLIC_HOST_URL ?? 'https://nourishnest.app',
-    siteName: 'Nourish Nest - Your Parenting Partner',
+    siteName: meta.longName,
     locale: 'en-US',
     type: 'website',
     images: [
@@ -101,10 +81,9 @@ export const metadata: Metadata = {
     },
   },
   twitter: {
-    title: 'Nourish Nest - Your Parenting Partner',
+    title: meta.longName,
     card: 'summary_large_image',
-    description:
-      'Elevate your parenting game with easy, nutritious meal plans and grocery list in minutes.',
+    description: meta.description,
     creator: '@nourish_nest',
     images: [
       `${
@@ -118,8 +97,8 @@ export const metadata: Metadata = {
     maximumScale: 1,
   },
   icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
+    icon: '/favicon.png',
+    apple: '/favicon.png',
   },
 }
 

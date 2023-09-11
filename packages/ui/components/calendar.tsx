@@ -42,7 +42,7 @@ function Calendar({
         nav_button_next: 'absolute right-0',
         table: 'w-full border-collapse space-y-1',
         head_row: 'flex',
-        head_cell: 'text-muted-foreground rounded-md w-9 font-normal text-base',
+        head_cell: 'text-muted-foreground rounded-lg w-9 font-normal text-base',
         row: 'flex w-full mt-2',
         cell: 'text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20',
         day: cn(

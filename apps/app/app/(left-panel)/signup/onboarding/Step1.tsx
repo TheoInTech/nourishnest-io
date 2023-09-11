@@ -1,3 +1,4 @@
+import { useAuth } from '@/providers/supabase-auth-provider'
 import { WeightUnit } from '@/types/form.type'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
@@ -17,7 +18,6 @@ import {
 import { Input } from 'ui/components/input'
 import { Popover, PopoverContent, PopoverTrigger } from 'ui/components/popover'
 import { RadioGroup, RadioGroupItem } from 'ui/components/radio-group'
-import { Separator } from 'ui/components/separator'
 import { cn } from 'ui/lib/utils'
 import is5MonthsTo3YearsOld from 'ui/utils/helpers/is5MonthsTo3YearsOld'
 import updateLocalStorage from 'ui/utils/helpers/updateLocalStorage'
@@ -49,6 +49,7 @@ const formSchema = z
 
 const Step1 = () => {
   const { handleNext, formData, setFormData, setStep } = useFormState()
+  const { user } = useAuth()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -70,7 +71,7 @@ const Step1 = () => {
       ...values,
     })
 
-    updateLocalStorage('onboarding', {
+    updateLocalStorage(`onboarding-${user?.id}`, {
       ...values,
       step: 4,
     })
@@ -82,76 +83,71 @@ const Step1 = () => {
   return (
     <FormLayout title="Create your child's profile">
       <Form {...form}>
-        <form className="flex flex-col col-span-2 gap-6 my-4">
-          <div className="flex gap-4">
-            {/* Nickname */}
-            <FormField
-              control={form.control}
-              name="nickName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="Nickname" autoFocus {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <form className="flex flex-col col-span-2 gap-4 my-4">
+          {/* Nickname */}
+          <FormField
+            control={form.control}
+            name="nickName"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input placeholder="Nickname" autoFocus {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            {/* Birthday */}
-            <FormField
-              control={form.control}
-              name="birthday"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={'outline'}
-                          className={cn(
-                            'pl-3 text-left font-normal hover:bg-accent-yellow dark:hover:text-accent-yellow-foreground',
-                            !field.value && 'text-muted-foreground',
-                          )}
-                        >
-                          {field.value ? (
-                            format(new Date(field.value), 'PPP')
-                          ) : (
-                            <span>Child&apos;s birthday</span>
-                          )}
-                          <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={new Date(field.value)}
-                        onSelect={value => field.onChange(value?.toISOString())}
-                        disabled={date => date > new Date()}
-                        fromYear={new Date().getFullYear() - 3}
-                        toYear={new Date(
-                          new Date().setMonth(new Date().getMonth() - 5),
-                        ).getFullYear()}
-                        toMonth={
-                          new Date(
-                            new Date().setMonth(new Date().getMonth() - 5),
-                          )
-                        }
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormDescription className="flex items-center gap-2">
-                    <InfoIcon className="w-3 h-3" /> Your child&apos;s birthday
-                    is used to calculate the age.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          {/* Birthday */}
+          <FormField
+            control={form.control}
+            name="birthday"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={'outline'}
+                        className={cn(
+                          'pl-3 text-left py-6 font-normal hover:bg-accent-yellow dark:hover:text-accent-yellow-foreground',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                      >
+                        {field.value ? (
+                          format(new Date(field.value), 'PPP')
+                        ) : (
+                          <span>Child&apos;s birthday</span>
+                        )}
+                        <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={new Date(field.value)}
+                      onSelect={value => field.onChange(value?.toISOString())}
+                      disabled={date => date > new Date()}
+                      fromYear={new Date().getFullYear() - 3}
+                      toYear={new Date(
+                        new Date().setMonth(new Date().getMonth() - 5),
+                      ).getFullYear()}
+                      toMonth={
+                        new Date(new Date().setMonth(new Date().getMonth() - 5))
+                      }
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormDescription className="flex items-center gap-2 text-[10px]">
+                  <InfoIcon className="w-3 h-3" /> Your child&apos;s birthday is
+                  used to calculate the age.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <Separator />
           <div className="flex gap-4">
             {/* Weight */}
             <FormField
