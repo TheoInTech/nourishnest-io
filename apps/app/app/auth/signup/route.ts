@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase-api'
 import { NextRequest, NextResponse } from 'next/server'
+import 'server-only'
 
 export const dynamic = 'force-dynamic'
 
