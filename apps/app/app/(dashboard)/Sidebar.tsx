@@ -97,15 +97,13 @@ const Sidebar = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 text-primary-foreground">
+          <div className="grid grid-cols-2 gap-4">
             <Card className="border border-gray-200">
               <CardContent className="flex flex-col items-center justify-center p-2 text-center">
                 <span className="text-2xl font-black text-primary">
                   {profile.generated_weeks}
                 </span>
-                <span className="text-xs text-primary-foreground">
-                  generated
-                </span>
+                <span className="text-xs text-foreground">generated</span>
               </CardContent>
             </Card>
             <Card className="border border-gray-200">
@@ -113,9 +111,7 @@ const Sidebar = () => {
                 <span className="text-2xl font-black text-primary">
                   {unlockable}
                 </span>
-                <span className="text-xs text-primary-foreground">
-                  unlockable
-                </span>
+                <span className="text-xs text-foreground">unlockable</span>
               </CardContent>
             </Card>
           </div>

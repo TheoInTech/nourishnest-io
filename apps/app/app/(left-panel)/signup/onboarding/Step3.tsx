@@ -152,7 +152,7 @@ const Step3 = () => {
               <Button
                 onClick={handleAddAllergy}
                 variant={'tertiary'}
-                className="py-6"
+                className="py-6 rounded-lg"
               >
                 <Plus className="w-6 h-6" />
               </Button>

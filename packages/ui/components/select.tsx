@@ -19,7 +19,7 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex h-10 w-full items-center justify-between rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+      'flex h-10 w-full items-center justify-between rounded-lg border border-input font-sans bg-background px-3 py-6 text-base ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
       className,
     )}
     {...props}
@@ -68,7 +68,7 @@ const SelectLabel = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Label
     ref={ref}
-    className={cn('py-1.5 pl-8 pr-2 text-sm font-semibold', className)}
+    className={cn('py-5 pl-8 pr-2 text-sm font-semibold', className)}
     {...props}
   />
 ))
@@ -81,12 +81,12 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex w-full cursor-pointer hover:bg-accent-yellow dark:hover:text-accent-yellow-foreground select-none items-center rounded-lg py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent-blue focus:text-accent-blue-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'relative flex w-full cursor-pointer hover:bg-accent-yellow dark:hover:text-accent-yellow-foreground select-none items-center rounded-lg py-3 pl-8 pr-2 text-sm outline-none focus:bg-accent-blue focus:text-accent-blue-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className,
     )}
     {...props}
   >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+    <span className="absolute left-2 flex h-6 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
         <Check className="w-4 h-4" />
       </SelectPrimitive.ItemIndicator>

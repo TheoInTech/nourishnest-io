@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import Logo from 'public/assets/logo-white.svg'
 import 'server-only'
-import { ThemeToggle } from 'ui/components/theme-toggle'
 import { TypographyH1 } from 'ui/components/typography/h1'
 import { TypographyH2 } from 'ui/components/typography/h2'
 import meta from 'ui/lib/metadata.json'
@@ -13,7 +12,7 @@ export default async function LeftPanelLayout({
 }) {
   return (
     <div className="flex w-full h-screen">
-      <div className="hidden relative md:flex bg-background justify-left overflow-hidden items-center w-full md:w-[50vw] h-full z-50">
+      <div className="hidden relative md:flex bg-primary/80 justify-left overflow-hidden items-center w-full md:w-[50vw] h-full z-50">
         <Image
           src="/assets/onboarding/left-panel.png"
           alt="Left Panel"
@@ -22,8 +21,8 @@ export default async function LeftPanelLayout({
           className="object-cover object-right w-full h-full"
         />
       </div>
-      <div className="relative w-full md:w-[50vw] bg-white flex justify-center items-center h-full">
-        <ThemeToggle className="absolute z-30 top-5 right-10" />
+      <div className="relative w-full md:w-[50vw] bg-white dark:bg-foreground flex justify-center items-center h-full">
+        {/* <ThemeToggle className="absolute z-30 top-5 right-10" /> */}
 
         <main className="relative flex items-start justify-center w-full h-screen overflow-auto">
           <div className="flex w-full min-h-screen justify-center overflow-auto md:w-[60%] p-8 flex-col gap-4 md:px-2 md:py-8 lg:py-16">
@@ -33,11 +32,11 @@ export default async function LeftPanelLayout({
                 <TypographyH1 className="font-light text-primary">
                   {meta.name}
                 </TypographyH1>
-                <TypographyH2 className="font-sans text-xs font-normal md:text-base">
-                  {meta.description}
-                </TypographyH2>
               </div>
             </div>
+            <TypographyH2 className="font-sans text-xs font-normal md:text-base">
+              {meta.description}
+            </TypographyH2>
             {children}
           </div>
         </main>

@@ -30,7 +30,7 @@ const MealDetailPage = () => {
   if (!meal) {
     return (
       <div className="flex flex-col gap-4">
-        <BackToDashboard week={week} />
+        <BackToDashboard week={week} day={day} />
 
         <Card>
           <CardContent className="flex items-center justify-center p-4 text-base md:p-16">
@@ -44,7 +44,7 @@ const MealDetailPage = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <BackToDashboard week={week} />
+      <BackToDashboard week={week} day={day} />
 
       <Card>
         <CardHeader style={{ borderTop: `8px solid ${meal.bgColor}` }}>

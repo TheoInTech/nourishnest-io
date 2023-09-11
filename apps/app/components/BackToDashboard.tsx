@@ -7,15 +7,17 @@ import { cn } from 'ui/lib/utils'
 
 const BackToDashboard = ({
   className,
-  week,
+  week = '1',
+  day = '1',
 }: {
   className?: string
   week: string | null
+  day: string | null
 }) => {
   const router = useRouter()
   return (
     <Button
-      onClick={() => router.push(week ? `/?week=${week}` : '/')}
+      onClick={() => router.push(week ? `/?week=${week}&day=${day}` : '/')}
       variant={'ghost'}
       className={cn(
         'self-start w-auto p-0 text-sm text-muted-foreground hover:bg-transparent hover:text-muted-foreground/70',

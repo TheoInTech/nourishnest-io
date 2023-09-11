@@ -6,7 +6,7 @@ import * as React from 'react'
 import { cn } from 'ui/lib/utils'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-lg px-4 py-6 text-lg font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center font-sans rounded-3xl px-6 py-6 text-lg font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
@@ -14,7 +14,7 @@ const buttonVariants = cva(
         destructive:
           'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         outline:
-          'border border-input bg-white hover:bg-accent-yellow hover:text-accent-yellow-foreground',
+          'border border-input bg-white dark:bg-foreground hover:bg-accent-yellow hover:text-accent-yellow-foreground',
         secondary:
           'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         tertiary:
@@ -25,9 +25,9 @@ const buttonVariants = cva(
           'bg-accent-yellow text-accent-yellow-foreground hover:bg-accent-yellow/60 text-accent-yellow-foreground',
       },
       size: {
-        default: 'h-10 px-4 py-6',
-        sm: 'h-9 rounded-lg px-3',
-        lg: 'h-11 rounded-lg px-8',
+        default: 'h-10 rounded-3xl px-6 py-6',
+        sm: 'h-9 rounded-3xl px-4',
+        lg: 'h-11 rounded-2xl px-8',
         icon: 'h-10 w-10',
       },
     },

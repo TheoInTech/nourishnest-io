@@ -244,7 +244,7 @@ const FormReview = () => {
       <TypographyP>
         Review your child&apos;s information and submit to generate your plan.
       </TypographyP>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="flex flex-wrap gap-4">
         <Card
           className="relative w-full cursor-pointer hover:bg-accent-yellow dark:hover:bg-accent-blue"
           onClick={() => setStep(1)}

@@ -82,7 +82,7 @@ const Step1 = () => {
                         variant="outline"
                         role="combobox"
                         className={cn(
-                          'justify-between',
+                          'justify-between rounded-lg',
                           !field.value && 'text-muted-foreground',
                         )}
                       >

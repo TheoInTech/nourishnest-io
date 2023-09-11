@@ -12,6 +12,7 @@ const HomePage = () => {
   const { profile } = useAuth()
   const searchParams = useSearchParams()
   const week = searchParams.get('week')
+  const day = searchParams.get('day')
 
   const [selectedWeek, setSelectedWeek] = useState<string>(week || '1')
 
@@ -35,7 +36,7 @@ const HomePage = () => {
         profile={profile}
         setSelectedWeek={setSelectedWeek}
       />
-      <SectionMeal plan={mealPlan} />
+      <SectionMeal plan={mealPlan} day={day ?? '1'} />
       <SectionGrocery plan={shoppingPlan} />
     </div>
   )
