@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase-api'
 import { NextRequest, NextResponse } from 'next/server'
+import 'server-only'
 
-export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: NextRequest) {
