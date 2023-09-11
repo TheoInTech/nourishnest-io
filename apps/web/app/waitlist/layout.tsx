@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Logo from 'public/assets/logo.svg'
 import 'server-only'
-import { ThemeToggle } from 'ui/components/theme-toggle'
 import { TypographyH1 } from 'ui/components/typography/h1'
 
 export const metadata: Metadata = {
@@ -26,7 +25,7 @@ export default async function WaitlistLayout({
         />
       </div>
       <div className="relative w-full md:w-[45vw] flex justify-center items-center h-full bg-white dark:bg-foreground">
-        <ThemeToggle className="absolute z-30 top-5 right-10" />
+        {/* <ThemeToggle className="absolute z-30 top-5 right-10" /> */}
 
         <main className="relative flex items-start justify-center w-full h-screen overflow-auto">
           <div className="flex w-full min-h-screen justify-center overflow-auto md:w-[70%] flex-col p-8 gap-4 md:p-0">
